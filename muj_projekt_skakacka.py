@@ -9,6 +9,14 @@ rozliseni_vyska = 600
 rozliseni_sirka = 800
 
 
+
+# vlastnosti hratelne postavy
+rychlost = 10
+vyska_skoku = 10
+
+
+
+
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 
 
@@ -40,6 +48,8 @@ while True:
 
     
     screen.blit(postava, (100, 90))  # Souřadnice X=100, Y=100
+    
+    
 
    
     
