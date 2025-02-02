@@ -11,9 +11,10 @@ rozliseni_sirka = 800
 
 
 # vlastnosti hratelne postavy
-rychlost = 10
+rychlost = 5
 vyska_skoku = 10
-
+pozice_x_hrace = 100
+pozice_y_hrace = 90
 
 
 
@@ -47,10 +48,15 @@ while True:
     screen.blit(background_image, (0, 0))
 
     
-    screen.blit(postava, (100, 90))  # Souřadnice X=100, Y=100
+    screen.blit(postava, (pozice_x_hrace, pozice_y_hrace))  # Souřadnice X=100, Y=100
+    
+    stisknute_klavesy = pygame.key.get_pressed()
     
     
-
+    if stisknute_klavesy[pygame.K_d]:  
+        pozice_x_hrace += rychlost
+    if stisknute_klavesy[pygame.K_a]:  
+        pozice_x_hrace -= rychlost
    
     
     
