@@ -9,26 +9,27 @@ rozliseni_vyska = 600
 rozliseni_sirka = 800
 
 # Vlastnosti postavy
-rychlost = 5
+rychlost = 2
 vyska_skoku = -14
 gravitace = 1
 y_velocity = 0
 pozice_x_hrace = 100
-pozice_y_hrace = 90
+pozice_y_hrace = 110
 skace = False
-zem = 90  # Výška země
 
 
 
+#PREKAZKY
+VYSKA_PREKAZEK = 400
 
 posun_sveta = 0
 
 
 prekazky = [
-    (300, 400, 50, 50), 
-    (800, 350, 50, 100),
-    (1200, 450, 60, 60),
-    (1600, 400, 70, 50)
+    (20, VYSKA_PREKAZEK, 50, 50), 
+    (800, VYSKA_PREKAZEK, 50, 50),
+    (1200, VYSKA_PREKAZEK, 50, 50),
+    (1600, VYSKA_PREKAZEK, 50, 50)
 ]
 
 
@@ -62,10 +63,7 @@ while True:
         if event.type == pygame.QUIT: 
             pygame.quit()
             sys.exit()   
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and not skace:  # Skok jen když nestojíme ve vzduchu
-                y_velocity = vyska_skoku
-                skace = True
+        
     
     
     
@@ -78,15 +76,7 @@ while True:
     if stisknute_klavesy[pygame.K_d]:
         posun_sveta -= rychlost
 
-    # Aplikace gravitace
-    pozice_y_hrace += y_velocity
-    y_velocity += gravitace
-
-    # Kolidujeme se zemí
-    if pozice_y_hrace >= zem:
-        pozice_y_hrace = zem
-        y_velocity = 0
-        skace = False
+    screen.fill((255, 255, 255))
 
     # Vykreslení
     for x, y, w, h in prekazky:
