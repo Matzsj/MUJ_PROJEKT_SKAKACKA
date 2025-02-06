@@ -9,7 +9,7 @@ rozliseni_vyska = 600
 rozliseni_sirka = 800
 
 # Vlastnosti postavy
-rychlost = 2
+rychlost = 9
 vyska_skoku = -14
 gravitace = 1
 y_velocity = 0
@@ -20,16 +20,18 @@ skace = False
 
 
 #PREKAZKY
-VYSKA_PREKAZEK = 400
+VYSKA_ZEM_PREKAZEK = 400
 
 posun_sveta = 0
 
 
+
+
 prekazky = [
-    (20, VYSKA_PREKAZEK, 50, 50), 
-    (800, VYSKA_PREKAZEK, 50, 50),
-    (1200, VYSKA_PREKAZEK, 50, 50),
-    (1600, VYSKA_PREKAZEK, 50, 50)
+    (20,VYSKA_ZEM_PREKAZEK, 50, 50), 
+    (800, VYSKA_ZEM_PREKAZEK, 50, 50),
+    (1200, VYSKA_ZEM_PREKAZEK, 50, 50),
+    (1600, VYSKA_ZEM_PREKAZEK, 50, 50)
 ]
 
 
@@ -75,7 +77,27 @@ while True:
 
     if stisknute_klavesy[pygame.K_d]:
         posun_sveta -= rychlost
-
+    
+    if stisknute_klavesy[pygame.K_SPACE]:
+        pass 
+        
+    
+    
+    
+    
+    
+    
+    '''
+    if stisknute_klavesy[pygame.K_SPACE] and not skace:
+        for i in range(len(prekazky)):
+            x, y, w, h = prekazky[i]
+            prekazky[i] = (x, y + 1, w, h)
+            vyska_skoku = y_velocity
+            skace = True
+    '''      
+    
+    
+    
     screen.fill((255, 255, 255))
 
     # Vykreslení
@@ -85,3 +107,7 @@ while True:
     screen.blit(postava, (pozice_x_hrace, pozice_y_hrace))
 
     pygame.display.update()
+    
+    clock = pygame.time.Clock()
+
+    clock.tick(60)
