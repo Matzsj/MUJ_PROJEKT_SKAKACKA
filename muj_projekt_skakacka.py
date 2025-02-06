@@ -26,6 +26,8 @@ posun_sveta = 0
 
 
 
+skok = 0
+
 
 prekazky = [
     (20,VYSKA_ZEM_PREKAZEK, 50, 50), 
@@ -79,25 +81,23 @@ while True:
         posun_sveta -= rychlost
     
     if stisknute_klavesy[pygame.K_SPACE]:
-        pass 
+        skok += vyska_skoku
         
-    
-    
-    
-    
-    
-    
-    '''
     if stisknute_klavesy[pygame.K_SPACE] and not skace:
-        for i in range(len(prekazky)):
-            x, y, w, h = prekazky[i]
-            prekazky[i] = (x, y + 1, w, h)
-            vyska_skoku = y_velocity
-            skace = True
-    '''      
+        y_velocity = vyska_skoku
+        skace = True
+        
+    pozice_y_hrace += y_velocity
+    y_velocity += gravitace
+    
+    if pozice_y_hrace >= 110:
+        pozice_y_hrace = 110
+        y_velocity = 0
+        skace = False 
     
     
     
+        
     screen.fill((255, 255, 255))
 
     # Vykreslení
