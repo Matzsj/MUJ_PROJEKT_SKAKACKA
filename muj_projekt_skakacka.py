@@ -17,7 +17,7 @@ pozice_x_hrace = 100
 pozice_y_hrace = 75
 skace = False
 
-
+clock = pygame.time.Clock()
 
 #PREKAZKY
 VYSKA_ZEM_PREKAZEK = 363
@@ -68,11 +68,7 @@ while True:
             pygame.quit()
             sys.exit()   
         
-    
-    
-    
-    
-    # Pohyb postavy
+    #Pohyb postavy
     stisknute_klavesy = pygame.key.get_pressed()
     if stisknute_klavesy[pygame.K_a]:
         posun_sveta += rychlost  # Posune svět doprava
@@ -108,6 +104,6 @@ while True:
 
     pygame.display.update()
     
-    clock = pygame.time.Clock()
+    
 
     clock.tick(60)
