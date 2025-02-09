@@ -14,13 +14,13 @@ vyska_skoku = -14
 gravitace = 1
 y_velocity = 0
 pozice_x_hrace = 100
-pozice_y_hrace = 110
+pozice_y_hrace = 75
 skace = False
 
 
 
 #PREKAZKY
-VYSKA_ZEM_PREKAZEK = 400
+VYSKA_ZEM_PREKAZEK = 363
 
 posun_sveta = 0
 
@@ -43,15 +43,15 @@ RED = (255, 0, 0)
 
 # Vytvoření okna
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
-
-# Načtení obrázku pozadí
-#    try:
- #       background_image = pygame.image.load('backgroundColorForest.png')
-  #      background_image = pygame.transform.scale(background_image, (rozliseni_sirka, rozliseni_vyska))
-   # except pygame.error as e:
-    #    print(f"Chyba při načítání obrázku: {e}")
-     #   pygame.quit()
-      #  sys.exit()
+ 
+ # Načtení obrázk pozadí
+try:
+    background_image = pygame.image.load('backgroundColorForest.png')
+    background_image = pygame.transform.scale(background_image, (rozliseni_sirka, rozliseni_vyska))
+except pygame.error as e:
+    print(f"Chyba při načítání obrázku: {e}")
+    pygame.quit()
+    sys.exit()
 
 # Načtení obrázku postavy
 try:
@@ -90,15 +90,15 @@ while True:
     pozice_y_hrace += y_velocity
     y_velocity += gravitace
     
-    if pozice_y_hrace >= 110:
-        pozice_y_hrace = 110
+    if pozice_y_hrace >= 75:
+        pozice_y_hrace = 75
         y_velocity = 0
         skace = False 
     
     
-    
+    screen.blit(background_image, (0, 0))
         
-    screen.fill((255, 255, 255))
+    
 
     # Vykreslení
     for x, y, w, h in prekazky:
