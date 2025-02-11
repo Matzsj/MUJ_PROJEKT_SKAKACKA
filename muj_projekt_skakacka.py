@@ -1,8 +1,8 @@
 import sys
-import pygame 
+import pygame
 
 # Inicializace Pygame
-pygame.init() 
+pygame.init()
 
 # Rozlišení okna
 rozliseni_vyska = 600
@@ -19,15 +19,16 @@ skace = False
 
 clock = pygame.time.Clock()
 
-# Překážky
+# PREKAZKY
 VYSKA_ZEM_PREKAZEK = 363
-
 posun_sveta = 0
 
 skok = 0
 
+
+
 prekazky = [
-    pygame.Rect(20, VYSKA_ZEM_PREKAZEK, 50, 50), 
+    pygame.Rect(20, VYSKA_ZEM_PREKAZEK, 50, 50),
     pygame.Rect(800, VYSKA_ZEM_PREKAZEK, 50, 50),
     pygame.Rect(1200, VYSKA_ZEM_PREKAZEK, 50, 50),
     pygame.Rect(1600, VYSKA_ZEM_PREKAZEK, 50, 50)
@@ -38,7 +39,7 @@ RED = (255, 0, 0)
 # Vytvoření okna
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 
-# Načtení obrázku pozadí
+# Načtení obrázk pozadí
 try:
     background_image = pygame.image.load('backgroundColorForest.png')
     background_image = pygame.transform.scale(background_image, (rozliseni_sirka, rozliseni_vyska))
@@ -50,66 +51,70 @@ except pygame.error as e:
 # Načtení obrázku postavy
 try:
     postava = pygame.image.load('ufo-removebg-preview.png').convert_alpha()
-    postava_rect = postava.get_rect(topleft=(pozice_x_hrace, pozice_y_hrace))
+    postava_rect = postava.get_rect()
+    postava_rect.topleft = (pozice_x_hrace, pozice_y_hrace)
 except pygame.error as e:
     print(f"Chyba při načítání obrázku postavy: {e}")
     pygame.quit()
     sys.exit()
 
-# Funkce pro detekci kolize
-def detekce_kolize(novy_posun_světa):
-    # Pro každou překážku
-    for prekazka in prekazky:
-        nova_pozice_postavy = postava_rect.move(novy_posun_světa, 0)  # Pohyb pouze horizontálně
-        if nova_pozice_postavy.colliderect(prekazka):  # Kolize s překážkou
-            return True  # Kolize, hráč se nemůže pohnout
-    return False  # Není kolize
+
+
+
+
+
+
+
+
+
+
 
 # Herní smyčka
 while True:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: 
+        if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-    # Pohyb světa kolem hráče
+    # Pohyb postavy
     stisknute_klavesy = pygame.key.get_pressed()
-    nova_posun_x = 0  # Počáteční hodnota posunu
-
-    if stisknute_klavesy[pygame.K_a]:  # Pohyb vlevo
-        nova_posun_x = -rychlost  # Posun doprava (posouváme okolí doleva)
-    if stisknute_klavesy[pygame.K_d]:  # Pohyb vpravo
-        nova_posun_x = rychlost  # Posun doleva (posouváme okolí doprava)
-
-    # Zkontroluj, zda by pohyb způsobil kolizi s překážkami
-    if not detekce_kolize(nova_posun_x):  # Pokud není kolize, posuň svět
-        posun_sveta += nova_posun_x  # Posuneme svět (obrázky se posunou)
-        postava_rect.x += nova_posun_x  # Posuneme hráče (vypadá to, že se pohybuje)
-
-    # Skákání a gravitace
+    if stisknute_klavesy[pygame.K_a]:  # Posune svět doleva
+        pozice_x_hrace -= rychlost
+    if stisknute_klavesy[pygame.K_d]:  # Posune svět doprava
+        pozice_x_hrace += rychlost
     if stisknute_klavesy[pygame.K_SPACE] and not skace:
         y_velocity = vyska_skoku
         skace = True
 
-    # Aplikace gravitace
     pozice_y_hrace += y_velocity
     y_velocity += gravitace
 
-    # Přistání na zemi
-    if pozice_y_hrace >= VYSKA_ZEM_PREKAZEK:
-        pozice_y_hrace = VYSKA_ZEM_PREKAZEK
+    if pozice_y_hrace >= 75:
+        pozice_y_hrace = 75
         y_velocity = 0
         skace = False
+        
+        
+    for prekazka in prekazky:
+        if prekazka.colliderect(postava_rect):
+            print('sigma')
+    
 
-    # Vykreslení pozadí
+    # Posun kamery podle pozice hráče (kamera je přibližně uprostřed)
+    posun_sveta = pozice_x_hrace - rozliseni_sirka  // 2 + 25
+    # 25 je polovina šířky hráče (50)
+
+    # Vykreslení
     screen.blit(background_image, (0, 0))
 
-    # Vykreslení překážek
-    for prekazka in prekazky:
-        pygame.draw.rect(screen, RED, (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))
+    # Vykreslení překážek s posunem světa
+    for x, y, w, h in prekazky:
+        pygame.draw.rect(screen, RED, (x - posun_sveta, y, w, h))
 
-    # Vykreslení postavy
-    screen.blit(postava, postava_rect.topleft)
+    # Vykreslení postavy, která je nyní více na středu obrazovky
+    posun_do_leva = 220  # Změňte tuto hodnotu pro větší nebo menší posun (např. 100)
+    screen.blit(postava, (pozice_x_hrace - posun_sveta - posun_do_leva, pozice_y_hrace))
 
     pygame.display.update()
+
     clock.tick(60)
