@@ -1,38 +1,23 @@
 import sys
-import pygame
+import pygame 
 
-# Inicializace Pygame
-pygame.init()
+pygame.init() 
 
-# Rozlišení okna
 rozliseni_vyska = 600
 rozliseni_sirka = 800
 
-# Vlastnosti postavy
-rychlost = 9
-vyska_skoku = -14
-gravitace = 1
-y_velocity = 0
-skace = False
+barva_ctverce = (255, 0, 0)  # Červená barva pro čtverec
+barva_ocí = (255, 255, 255)   # Bílá barva pro oči
+barva_zornic = (0, 0, 0)      # Černá barva pro zornice
 
-clock = pygame.time.Clock()
+# Počáteční pozice čtverce
+x_ctverec = rozliseni_sirka // 2 - 25  # Střed čtverce
+y_ctverec = rozliseni_vyska // 2 - 25   # Střed čtverce
+rychlost = 5  # Rychlost pohybu
 
-# Překážky
-VYSKA_ZEM_PREKAZEK = 363
-posun_sveta = 0
-
-prekazky = [
-    pygame.Rect(800, VYSKA_ZEM_PREKAZEK, 50, 50),
-    pygame.Rect(1200, VYSKA_ZEM_PREKAZEK, 50, 50),
-    pygame.Rect(1600, VYSKA_ZEM_PREKAZEK, 50, 50)
-]
-
-RED = (255, 0, 0)
-
-# Vytvoření okna
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 
-# Načtení obrázků
+# Načtení pozadí
 try:
     background_image = pygame.image.load('backgroundColorForest.png')
     background_image = pygame.transform.scale(background_image, (rozliseni_sirka, rozliseni_vyska))
@@ -41,86 +26,41 @@ except pygame.error as e:
     pygame.quit()
     sys.exit()
 
-try:
-    postava = pygame.image.load('ufo-removebg-preview.png').convert_alpha()
-    postava_rect = postava.get_rect()
-    postava_rect.topleft = (100, 75)
-except pygame.error as e:
-    print(f"Chyba při načítání obrázku postavy: {e}")
-    pygame.quit()
-    sys.exit()
-
-# Funkce pro detekci kolize
-def detekce_kolize(novy_rect, posun_hitboxu=False):
-    for prekazka in prekazky:
-        if posun_hitboxu:
-            upraveny_hitbox_prekazky = prekazka.move(336, 0)  # Posun pouze pro horizontální kolize
-        else:
-            upraveny_hitbox_prekazky = prekazka  # Při skákání necháme původní hitbox
-        
-        if novy_rect.colliderect(upraveny_hitbox_prekazky):
-            return True
-    return False
-
-# Herní smyčka
+# Hlavní smyčka hry
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    for udalost in pygame.event.get():
+        if udalost.type == pygame.QUIT: 
             pygame.quit()
-            sys.exit()
+            sys.exit()   
 
-    # Pohyb postavy
-    stisknute_klavesy = pygame.key.get_pressed()
+    # Kontrola stisknutých kláves pro pohyb čtverce
+    klavesy = pygame.key.get_pressed()
+    if klavesy[pygame.K_w]:  # W pro pohyb nahoru
+        y_ctverec -= rychlost
+    if klavesy[pygame.K_s]:  # S pro pohyb dolů
+        y_ctverec += rychlost
+    if klavesy[pygame.K_a]:  # A pro pohyb vlevo
+        x_ctverec -= rychlost
+    if klavesy[pygame.K_d]:  # D pro pohyb vpravo
+        x_ctverec += rychlost
 
-    # Horizontální pohyb (s posunutým hitboxem)
-    if stisknute_klavesy[pygame.K_a]:  # Pohyb vlevo
-        novy_rect = postava_rect.move(-rychlost, 0)
-        if not detekce_kolize(novy_rect, posun_hitboxu=True):  # Posunutý hitbox pro detekci
-            postava_rect = novy_rect
-
-    if stisknute_klavesy[pygame.K_d]:  # Pohyb vpravo
-        novy_rect = postava_rect.move(rychlost, 0)
-        if not detekce_kolize(novy_rect, posun_hitboxu=True):  # Posunutý hitbox pro detekci
-            postava_rect = novy_rect
-
-    # Skok
-    if stisknute_klavesy[pygame.K_SPACE] and not skace:
-        y_velocity = vyska_skoku
-        skace = True
-
-    # Aplikace gravitace
-    y_velocity += gravitace
-    novy_rect = postava_rect.move(0, y_velocity)
-    # Vertikální kolize (s původním hitboxem překážky)
-    if not detekce_kolize(novy_rect, posun_hitboxu=False):
-        postava_rect = novy_rect
-    else:
-        if y_velocity > 0:  # Pokud padáme a narazíme na překážku
-            postava_rect.bottom = novy_rect.top
-            y_velocity = 0
-            skace = False
-        elif y_velocity < 0:  # Pokud skáčeme nahoru a narazíme
-            postava_rect.top = novy_rect.bottom
-            y_velocity = 0
-
-    # Přistání na zemi (zabraňuje propadnutí skrz podlahu)
-    if postava_rect.bottom >= 508:
-        postava_rect.bottom = 508
-        y_velocity = 0
-        skace = False
-
-    # Posun kamery tak, aby hráč byl uprostřed obrazovky
-    posun_sveta = postava_rect.x - rozliseni_sirka // 2 + postava_rect.width // 2
-
-    # Vykreslení
+    # Vyplnění obrazovky pozadím
     screen.blit(background_image, (0, 0))
 
-    # Vykreslení překážek s posunem světa
-    for prekazka in prekazky:
-        pygame.draw.rect(screen, RED, (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))
+    # Kreslení čtverce
+    pygame.draw.rect(screen, barva_ctverce, (x_ctverec, y_ctverec, 50, 50))
 
-    # Vykreslení postavy na střed obrazovky
-    screen.blit(postava, (rozliseni_sirka // 2 - postava_rect.width // 2, postava_rect.y))
+    # Kreslení očí
+    # Levé oko
+    pygame.draw.circle(screen, barva_ocí, (x_ctverec + 15, y_ctverec + 15), 10)  # Bílé oko
+    pygame.draw.circle(screen, barva_zornic, (x_ctverec + 15, y_ctverec + 15), 5)   # Zornice
+
+    # Pravé oko
+    pygame.draw.circle(screen, barva_ocí, (x_ctverec + 35, y_ctverec + 15), 10)  # Bílé oko
+    pygame.draw.circle(screen, barva_zornic, (x_ctverec + 35, y_ctverec + 15), 5)   # Zornice
 
     pygame.display.update()
+    
+    clock = pygame.time.Clock()
+
     clock.tick(60)
