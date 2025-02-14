@@ -77,7 +77,7 @@ while True:
     for prekazka in prekazky:
         if postava_rect.colliderect(prekazka):
             # Kolize shora (dopad na překážku)
-            if y_velocity > 0 and postava_rect.bottom >= prekazka.top:
+            if y_velocity < 0 and postava_rect.bottom >= prekazka.top:
                 new_y_ctverec = prekazka.top - 50  
                 y_velocity = 0
                 skace = False
@@ -112,7 +112,7 @@ while True:
     screen.blit(background_image, (0, 0))
 
     # Postava
-    pygame.draw.rect(screen, barva_ctverce, (x_ctverec, y_ctverec, 50, 50))
+    pygame.draw.rect(screen, barva_ctverce, (new_x_ctverec, new_y_ctverec, 50, 50))
     pygame.draw.circle(screen, barva_ocí, (x_ctverec + 15, y_ctverec + 15), 10)  
     pygame.draw.circle(screen, barva_zornic, (x_ctverec + 15, y_ctverec + 15), 5)   
     pygame.draw.circle(screen, barva_ocí, (x_ctverec + 35, y_ctverec + 15), 10)  
