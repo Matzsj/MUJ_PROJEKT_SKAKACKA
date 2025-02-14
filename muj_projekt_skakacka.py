@@ -23,6 +23,12 @@ skace = False
 
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 
+
+prekazky = [
+    pygame.Rect(500, 363, 50, 50)
+    ]
+
+
 # Načtení pozadí
 try:
     background_image = pygame.image.load('backgroundColorForest.png')
@@ -68,15 +74,23 @@ while True:
     screen.blit(background_image, (0, 0))
 
     # Kreslení čtverce
-    pygame.draw.rect(screen, barva_ctverce, (x_ctverec, y_ctverec, 50, 50))
-
-    # Kreslení očí
-    pygame.draw.circle(screen, barva_ocí, (x_ctverec + 15, y_ctverec + 15), 10)  # Levé oko
-    pygame.draw.circle(screen, barva_zornic, (x_ctverec + 15, y_ctverec + 15), 5)   # Zornice
-
-    pygame.draw.circle(screen, barva_ocí, (x_ctverec + 35, y_ctverec + 15), 10)  # Pravé oko
-    pygame.draw.circle(screen, barva_zornic, (x_ctverec + 35, y_ctverec + 15), 5)   # Zornice
-
+     postava = pygame.draw.rect(screen, barva_ctverce, (x_ctverec, y_ctverec, 50, 50))
+               pygame.draw.circle(screen, barva_ocí, (x_ctverec + 15, y_ctverec + 15), 10)  # Levé oko
+               pygame.draw.circle(screen, barva_zornic, (x_ctverec + 15, y_ctverec + 15), 5)   # Zornice
+               pygame.draw.circle(screen, barva_ocí, (x_ctverec + 35, y_ctverec + 15), 10)  # Pravé oko
+               pygame.draw.circle(screen, barva_zornic, (x_ctverec + 35, y_ctverec + 15), 5)   # Zornice
+    
+    
+    
+    
+    
+    for x, y, h, w in prekazky:
+        pygame.draw.rect(screen, barva_ctverce, (x, y, h ,w))
+    
+    
+    
+    
+    
     pygame.display.update()
     
     clock.tick(60)  # Nastavujeme FPS na 60
