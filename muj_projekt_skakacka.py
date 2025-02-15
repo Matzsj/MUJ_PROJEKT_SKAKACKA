@@ -26,7 +26,8 @@ screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 # Seznam překážek
 prekazky = [
     pygame.Rect(500, 363, 50, 50),  # Překážka nižší než zem
-    pygame.Rect(650, 363, 50, 50)   # Vyšší překážka
+    pygame.Rect(600, 343, 50, 70),   # Vyšší překážka
+    pygame.Rect(780, 313, 200, 100)
 ]
 
 # Načtení pozadí
@@ -79,7 +80,7 @@ while True:
             # Kolize shora (dopad na překážku)
             if y_velocity > 0 and postava_rect.bottom > prekazka.top and postava_rect.bottom - y_velocity <= prekazka.top:
                 if postava_rect.right > prekazka.left + 20 and postava_rect.left < prekazka.right - 20:
-                    new_y_ctverec = prekazka.top - 50  
+                    new_y_ctverec = prekazka.top - prekazka.height   
                     y_velocity = 0
                     skace = False
                     kolize_y = True
@@ -99,19 +100,20 @@ while True:
                 new_x_ctverec = prekazka.right  
                 kolize_x = True
 
-    # Funkce pro kontrolu, zda postava stojí na překážce
-    def stoji_na_prekazce_funkce(postava_rect, prekazky):
+    def stoji_na_prekazce_funkce(postava_rect, prekazky, y_velocity):
         for prekazka in prekazky:
             if (
-                4 + postava_rect.bottom >= prekazka.top and
-                postava_rect.bottom - y_velocity <= prekazka.top and
-                postava_rect.right > prekazka.left + 5 and
+                2 + postava_rect.bottom + y_velocity >= prekazka.top and  # Postava je těsně nad překážkou
+                postava_rect.bottom <= prekazka.top + 5 and  # Tolerance pro přesnost dopadu
+                postava_rect.right > prekazka.left + 5 and  # Část postavy je na překážce
                 postava_rect.left < prekazka.right - 5
             ):
                 return True
-        return False  
+        return False
 
-    stoji_na_prekazce = stoji_na_prekazce_funkce(postava_rect, prekazky)
+
+
+    stoji_na_prekazce = stoji_na_prekazce_funkce(postava_rect, prekazky, y_velocity)
 
     if stoji_na_prekazce:
         y_velocity = 0
@@ -143,7 +145,13 @@ while True:
     # Překážky
     for prekazka in prekazky:
         pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))  
-
+    
+    font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
+    text = "level 1"  # Text, který chcete vykreslit
+    text_surface = font.render(text, True, (0, 0, 0))  # Bílý text
+    text_rect = text_surface.get_rect(center=(rozliseni_sirka // 2, 50))  # Umístění textu na obrazovku
+    screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+        
     pygame.display.update()
     
     clock.tick(60)  
