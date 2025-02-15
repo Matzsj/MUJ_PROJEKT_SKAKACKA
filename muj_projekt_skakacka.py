@@ -30,6 +30,21 @@ prekazky = [
 ]
 
 # Načtení pozadí
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 try:
     background_image = pygame.image.load('backgroundColorForest.png')
     background_image = pygame.transform.scale(background_image, (rozliseni_sirka, rozliseni_vyska))
@@ -72,20 +87,24 @@ while True:
     # Ověření kolize
     kolize_x = False
     kolize_y = False
-    stoji_na_prekazce = False  # Přidáno pro kontrolu, zda postava stojí na překážce
-
+    stoji_na_prekazce = False  # Přidáno pro kontrolu, zda postava stojí na překážcefor prekazka in prekazky:
+    
     for prekazka in prekazky:
         if postava_rect.colliderect(prekazka):
             # Kolize shora (dopad na překážku)
-            if y_velocity < 0 and postava_rect.bottom >= prekazka.top:
-                new_y_ctverec = prekazka.top - 50  
-                y_velocity = 0
-                skace = False
-                kolize_y = True
-                stoji_na_prekazce = True  # Postava stojí na překážce
+            if y_velocity > 0 and postava_rect.bottom > prekazka.top and postava_rect.bottom - y_velocity <= prekazka.top:
+                if postava_rect.right > prekazka.left + 20 and postava_rect.left < prekazka.right - 20:
+                    new_y_ctverec = prekazka.top - 50  
+                    y_velocity = 0
+                    skace = False
+                    kolize_y = True
+                    stoji_na_prekazce = True  # Nastavíme, že stojí na překážce
 
+    
+
+            
             # Kolize zespodu (náraz hlavou)
-            elif y_velocity < 0 and postava_rect.top <= prekazka.bottom:
+            if y_velocity > 0 and postava_rect.bottom >= prekazka.top and postava_rect.top < prekazka.top:
                 new_y_ctverec = prekazka.bottom
                 y_velocity = 0
                 kolize_y = True
@@ -97,13 +116,56 @@ while True:
             elif postava_rect.left <= prekazka.right and postava_rect.right > prekazka.right:
                 new_x_ctverec = prekazka.right  
                 kolize_x = True
+    
+    
+    def stoji_na_prekazce_funkce(postava_rect, prekazky):
+        for prekazka in prekazky:
+            # Ověříme, jestli aspoň část postavy je nad překážkou
+            if (
+                4 + postava_rect.bottom >= prekazka.top and  # Spodní část postavy je na úrovni překážky
+                postava_rect.bottom - y_velocity <= prekazka.top and  # Předchozí pozice byla nad překážkou
+                postava_rect.right > prekazka.left + 5 and  # Alespoň malá část je na překážce
+                postava_rect.left < prekazka.right - 5
+            ):
+                return True  # Stojí na překážce
+        return False  # Není na překážce
 
+    
+    
+    
+    
+    
+    
+    
+    
+    stoji_na_prekazce = stoji_na_prekazce_funkce(postava_rect, prekazky)
+
+    if stoji_na_prekazce:
+        y_velocity = 0
+        skace = False
+
+    
+    
+
+    
     # Ověření, zda postava stojí na zemi
     if not kolize_y and not stoji_na_prekazce and new_y_ctverec >= 363:  
         new_y_ctverec = 363
         y_velocity = 0
         skace = False
+    
+    
+    stoji_na_prekazce = any(
+        postava_rect.bottom >= prekazka.top and
+        postava_rect.bottom - y_velocity <= prekazka.top and
+        postava_rect.right > prekazka.left + 20 and
+        postava_rect.left < prekazka.right - 20
+        for prekazka in prekazky
+    )
 
+
+
+    
     # Aktualizace pozice
     x_ctverec = new_x_ctverec
     y_ctverec = new_y_ctverec
@@ -112,7 +174,7 @@ while True:
     screen.blit(background_image, (0, 0))
 
     # Postava
-    pygame.draw.rect(screen, barva_ctverce, (new_x_ctverec, new_y_ctverec, 50, 50))
+    pygame.draw.rect(screen, barva_ctverce, (new_x_ctverec, new_y_ctverec + 2, 50, 51))
     pygame.draw.circle(screen, barva_ocí, (x_ctverec + 15, y_ctverec + 15), 10)  
     pygame.draw.circle(screen, barva_zornic, (x_ctverec + 15, y_ctverec + 15), 5)   
     pygame.draw.circle(screen, barva_ocí, (x_ctverec + 35, y_ctverec + 15), 10)  
