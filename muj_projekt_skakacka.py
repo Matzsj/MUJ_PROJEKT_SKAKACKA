@@ -40,9 +40,6 @@ except pygame.error as e:
 
 clock = pygame.time.Clock()  # Inicializace hodin
 
-# Proměnná pro pozici kamery
-camera_x = 0
-
 while True:
     for udalost in pygame.event.get():
         if udalost.type == pygame.QUIT: 
@@ -75,7 +72,8 @@ while True:
     # Ověření kolize
     kolize_x = False
     kolize_y = False
-    stoji_na_prekazce = False  # Přidáno pro kontrolu, zda postava stojí na překážce
+    stoji_na_prekazce = False  
+
     for prekazka in prekazky:
         if postava_rect.colliderect(prekazka):
             # Kolize shora (dopad na překážku)
@@ -85,7 +83,7 @@ while True:
                     y_velocity = 0
                     skace = False
                     kolize_y = True
-                    stoji_na_prekazce = True  # Nastavíme, že stojí na překážce
+                    stoji_na_prekazce = True  
 
             # Kolize zespodu (náraz hlavou)
             if y_velocity > 0 and postava_rect.bottom >= prekazka.top and postava_rect.top < prekazka.top:
@@ -101,13 +99,19 @@ while True:
                 new_x_ctverec = prekazka.right  
                 kolize_x = True
 
-    stoji_na_prekazce = any(
-        postava_rect.bottom >= prekazka.top and
-        postava_rect.bottom - y_velocity <= prekazka.top and
-        postava_rect.right > prekazka.left + 20 and
-        postava_rect.left < prekazka.right - 20
-        for prekazka in prekazky
-    )
+    # Funkce pro kontrolu, zda postava stojí na překážce
+    def stoji_na_prekazce_funkce(postava_rect, prekazky):
+        for prekazka in prekazky:
+            if (
+                4 + postava_rect.bottom >= prekazka.top and
+                postava_rect.bottom - y_velocity <= prekazka.top and
+                postava_rect.right > prekazka.left + 5 and
+                postava_rect.left < prekazka.right - 5
+            ):
+                return True
+        return False  
+
+    stoji_na_prekazce = stoji_na_prekazce_funkce(postava_rect, prekazky)
 
     if stoji_na_prekazce:
         y_velocity = 0
@@ -124,22 +128,22 @@ while True:
     y_ctverec = new_y_ctverec
 
     # Posun kamery
-    camera_x = x_ctverec - rozliseni_sirka // 2 + 25  # Posun kamery podle pozice postavy
+    posun_sveta = x_ctverec - rozliseni_sirka // 2 + 25  # Vypočítání posunu kamery
 
     # Kreslení
     screen.blit(background_image, (0, 0))
 
-    # Vykreslení postavy a překážek
-    pygame.draw.rect(screen, barva_ctverce, (x_ctverec - camera_x, y_ctverec + 2, 50, 51))
-    pygame.draw.circle(screen, barva_ocí, (x_ctverec - camera_x + 15, y_ctverec + 15), 10)  
-    pygame.draw.circle(screen, barva_zornic, (x_ctverec - camera_x + 15, y_ctverec + 15), 5)   
-    pygame.draw.circle(screen, barva_ocí, (x_ctverec - camera_x + 35, y_ctverec + 15), 10)  
-    pygame.draw.circle(screen, barva_zornic, (x_ctverec - camera_x + 35, y_ctverec + 15), 5)   
+    # Postava
+    pygame.draw.rect(screen, barva_ctverce, (x_ctverec - posun_sveta, y_ctverec + 2, 50, 51))
+    pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 15, y_ctverec + 15), 10)  
+    pygame.draw.circle(screen, barva_zornic, (x_ctverec - posun_sveta + 15, y_ctverec + 15), 5)   
+    pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 35, y_ctverec + 15), 10)  
+    pygame.draw.circle(screen, barva_zornic, (x_ctverec - posun_sveta + 35, y_ctverec + 15), 5)   
 
     # Překážky
     for prekazka in prekazky:
-        pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - camera_x, prekazka.y, prekazka.width, prekazka.height))  
+        pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))  
 
     pygame.display.update()
     
-    clock.tick(60)
+    clock.tick(60)  
