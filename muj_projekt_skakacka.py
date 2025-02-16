@@ -27,7 +27,13 @@ screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 prekazky = [
     pygame.Rect(500, 363, 50, 50),  # Překážka nižší než zem
     pygame.Rect(600, 343, 50, 70),   # Vyšší překážka
-    pygame.Rect(780, 313, 200, 100)
+    pygame.Rect(780, 313, 250, 100),
+    pygame.Rect(1120, 230, 70, 30),
+    pygame.Rect(1290, 230, 70, 30),
+    pygame.Rect(1460, 230, 70, 30),
+    pygame.Rect(1630, 230, 70, 30),
+    pygame.Rect(1800, 230, 70, 30),
+    pygame.Rect(2000, 313, 250, 100),
 ]
 
 # Načtení pozadí
