@@ -39,7 +39,11 @@ prekazky = [
     pygame.Rect(2720, 274, 60, 12),
     pygame.Rect(2544, 195, 60, 12),
     pygame.Rect(2718, 118, 62, 12),
-    pygame.Rect(2780, 118, 60, 295)
+    pygame.Rect(2770, 118, 60, 295),
+    pygame.Rect(2830, 148, 100, 20),
+    pygame.Rect(2900, 165, 100, 20),
+    pygame.Rect(2970, 182, 100, 20),
+    pygame.Rect(3040, 199, 100, 20 ),
 ]
 
 # Načtení pozadí
@@ -82,7 +86,7 @@ while True:
     # Vytvoření Rect objektu pro postavu
     postava_rect = pygame.Rect(new_x_ctverec, new_y_ctverec, 50, 50)
 
-    # Ověření kolize
+    # Ověření kolize X a Y zvlášť
     kolize_x = False
     kolize_y = False
     stoji_na_prekazce = False  
@@ -91,26 +95,31 @@ while True:
         if postava_rect.colliderect(prekazka):
             # Kolize shora (dopad na překážku)
             if y_velocity > 0 and postava_rect.bottom > prekazka.top and postava_rect.bottom - y_velocity <= prekazka.top:
-                if postava_rect.right > prekazka.left + 20 and postava_rect.left < prekazka.right - 20:
-                    new_y_ctverec = prekazka.top - prekazka.height   
+                if postava_rect.right > prekazka.left + 5 and postava_rect.left < prekazka.right - 5:
+                    new_y_ctverec = prekazka.top - 50   # Opraveno na správnou výšku
                     y_velocity = 0
                     skace = False
                     kolize_y = True
                     stoji_na_prekazce = True  
 
             # Kolize zespodu (náraz hlavou)
-            if y_velocity > 0 and postava_rect.bottom >= prekazka.top and postava_rect.top < prekazka.top:
-                new_y_ctverec = prekazka.bottom 
+            if y_velocity < 0 and postava_rect.top <= prekazka.bottom and postava_rect.bottom > prekazka.bottom:
+                new_y_ctverec = prekazka.bottom
                 y_velocity = 0
                 kolize_y = True
 
-            # Kolize z boku
-            if postava_rect.right >= prekazka.left and postava_rect.left < prekazka.left:
+            # Kolize z boku – ale dovolíme skok a pád dolů
+            if postava_rect.right >= prekazka.left and postava_rect.left < prekazka.left and postava_rect.bottom > prekazka.top + 5:
                 new_x_ctverec = prekazka.left - 50  
                 kolize_x = True
-            elif postava_rect.left <= prekazka.right and postava_rect.right > prekazka.right:
+            elif postava_rect.left <= prekazka.right and postava_rect.right > prekazka.right and postava_rect.bottom > prekazka.top + 5:
                 new_x_ctverec = prekazka.right  
                 kolize_x = True
+
+                
+
+
+                
 
     def stoji_na_prekazce_funkce(postava_rect, prekazky, y_velocity):
         for prekazka in prekazky:
