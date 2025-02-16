@@ -13,11 +13,12 @@ barva_zornic = (0, 0, 0)      # Černá barva pro zornice
 # Počáteční pozice čtverce
 x_ctverec = rozliseni_sirka // 2 - 25  # Střed čtverce
 y_ctverec = 363  # Počáteční výška na zemi
-rychlost = 5  # Rychlost pohybu
+rychlost = 5.65  # Rychlost pohybu
 
 gravitace = 1
 y_velocity = 0 
-vyska_skoku = -15  # Skok
+vyska_skoku = - 12.9
+#-12.6  # Skok
 
 skace = False
 
@@ -28,12 +29,17 @@ prekazky = [
     pygame.Rect(500, 363, 50, 50),  # Překážka nižší než zem
     pygame.Rect(600, 343, 50, 70),   # Vyšší překážka
     pygame.Rect(780, 313, 250, 100),
-    pygame.Rect(1120, 230, 70, 30),
+    pygame.Rect(1120, 260, 70, 30),
     pygame.Rect(1290, 230, 70, 30),
-    pygame.Rect(1460, 230, 70, 30),
+    pygame.Rect(1460, 260, 70, 30),
     pygame.Rect(1630, 230, 70, 30),
-    pygame.Rect(1800, 230, 70, 30),
+    pygame.Rect(1800, 260, 70, 30),
     pygame.Rect(2000, 313, 250, 100),
+    pygame.Rect(2620, 344, 60, 70),
+    pygame.Rect(2720, 274, 60, 12),
+    pygame.Rect(2544, 195, 60, 12),
+    pygame.Rect(2718, 118, 62, 12),
+    pygame.Rect(2780, 118, 60, 295)
 ]
 
 # Načtení pozadí
@@ -94,7 +100,7 @@ while True:
 
             # Kolize zespodu (náraz hlavou)
             if y_velocity > 0 and postava_rect.bottom >= prekazka.top and postava_rect.top < prekazka.top:
-                new_y_ctverec = prekazka.bottom
+                new_y_ctverec = prekazka.bottom 
                 y_velocity = 0
                 kolize_y = True
 
@@ -143,9 +149,9 @@ while True:
 
     # Postava
     pygame.draw.rect(screen, barva_ctverce, (x_ctverec - posun_sveta, y_ctverec + 2, 50, 51))
-    pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 15, y_ctverec + 15), 10)  
+    pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 15, y_ctverec + 15), 9.999)  
     pygame.draw.circle(screen, barva_zornic, (x_ctverec - posun_sveta + 15, y_ctverec + 15), 5)   
-    pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 35, y_ctverec + 15), 10)  
+    pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 35, y_ctverec + 15), 9.999)  
     pygame.draw.circle(screen, barva_zornic, (x_ctverec - posun_sveta + 35, y_ctverec + 15), 5)   
 
     # Překážky
