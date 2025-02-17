@@ -22,6 +22,12 @@ vyska_skoku = - 12.9
 
 skace = False
 
+
+
+pohybujici_prekazkax1 = 3200
+
+
+
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 
 # Seznam překážek
@@ -40,11 +46,20 @@ prekazky = [
     pygame.Rect(2544, 195, 60, 12),
     pygame.Rect(2718, 118, 62, 12),
     pygame.Rect(2770, 118, 60, 295),
-    pygame.Rect(2830, 148, 100, 20),
-    pygame.Rect(2900, 165, 100, 20),
-    pygame.Rect(2970, 182, 100, 20),
-    pygame.Rect(3040, 199, 100, 20 ),
+    pygame.Rect(2830, 148, 70, 19),
+    pygame.Rect(2900, 165, 70, 19),
+    pygame.Rect(2970, 182, 70, 19),
+    pygame.Rect(3040, 199, 70, 19),
+    pygame.Rect(3110, 216, 70, 19),
+    pygame.Rect(pohybujici_prekazkax1, 216, 70, 19),
 ]
+
+
+
+
+
+
+
 
 # Načtení pozadí
 try:
@@ -117,7 +132,7 @@ while True:
                 kolize_x = True
 
                 
-
+            
 
                 
 
@@ -131,9 +146,24 @@ while True:
             ):
                 return True
         return False
+    
+    # Změna směru pohybu
+    pohyb_prekx = 2
+    if pohybujici_prekazkax1 <= 3200:
+        pohybujici_prekazka_smer = 2
+    elif pohybujici_prekazkax1 >= 3700:
+        pohybujici_prekazka_smer = -2
 
+    # Posun překážky
+    pohybujici_prekazkax1 += pohybujici_prekazka_smer
 
+    
+    # Aktualizace polohy pohybující se překážky v seznamu
+    prekazky[19].x = pohybujici_prekazkax1
 
+        
+    
+    
     stoji_na_prekazce = stoji_na_prekazce_funkce(postava_rect, prekazky, y_velocity)
 
     if stoji_na_prekazce:
