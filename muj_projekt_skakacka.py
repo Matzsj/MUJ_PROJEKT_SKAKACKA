@@ -22,6 +22,14 @@ vyska_skoku = - 12.9
 
 skace = False
 
+
+
+
+
+pohybujici_prekazkax1 = 3200
+
+
+
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 
 # Seznam překážek
@@ -40,11 +48,25 @@ prekazky = [
     pygame.Rect(2544, 195, 60, 12),
     pygame.Rect(2718, 118, 62, 12),
     pygame.Rect(2770, 118, 60, 295),
-    pygame.Rect(2830, 148, 100, 20),
-    pygame.Rect(2900, 165, 100, 20),
-    pygame.Rect(2970, 182, 100, 20),
-    pygame.Rect(3040, 199, 100, 20 ),
+    pygame.Rect(2830, 148, 70, 19),
+    pygame.Rect(2900, 165, 70, 19),
+    pygame.Rect(2970, 182, 70, 19),
+    pygame.Rect(3040, 199, 70, 19),
+    pygame.Rect(3110, 216, 70, 19),
+    pygame.Rect(3200, 216, 70, 19),
 ]
+
+
+
+posledni_prekazka = prekazky[19]
+smer_pohybu = 2  # Může být kladné nebo záporné pro pohyb vlevo/vpravo
+
+
+
+  # Pro ověření, že funguje správně
+
+
+
 
 # Načtení pozadí
 try:
@@ -117,6 +139,20 @@ while True:
                 kolize_x = True
 
                 
+    # Změna směru pohybu
+    pohyb_prekx = 2
+    if pohybujici_prekazkax1 <= 3200:
+        pohybujici_prekazka_smer = 2
+    elif pohybujici_prekazkax1 >= 3700:
+        pohybujici_prekazka_smer = -2
+
+    # Posun překážky
+    pohybujici_prekazkax1 += pohybujici_prekazka_smer
+
+
+    # Aktualizace polohy pohybující se překážky v seznamu
+    prekazky[19].x = pohybujici_prekazkax1
+
 
 
                 
@@ -167,6 +203,9 @@ while True:
     for prekazka in prekazky:
         pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))  
     
+    pygame.draw.rect(screen, (0, 255, 0), (posledni_prekazka.x - posun_sveta, posledni_prekazka.y, posledni_prekazka.width, posledni_prekazka.height))
+
+    
     font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
     text = "level 1"  # Text, který chcete vykreslit
     text_surface = font.render(text, True, (0, 0, 0))  # Bílý text
@@ -175,4 +214,4 @@ while True:
         
     pygame.display.update()
     
-    clock.tick(60)  
+    clock.tick(60) 
