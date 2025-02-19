@@ -17,15 +17,21 @@ rychlost = 5.65  # Rychlost pohybu
 
 gravitace = 1
 y_velocity = 0 
-vyska_skoku = - 12.9
-#-12.6  # Skok
+vyska_skoku = - 12.6  # Skok
 
 skace = False
 
 
 
+<<<<<<< HEAD
 pohybujici_prekazkax1 = 3200
 
+=======
+
+
+pohybujici_prekazkax1 = 3200
+pohybujici_prekazkay1 = 300
+>>>>>>> origin/main
 
 
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
@@ -51,15 +57,43 @@ prekazky = [
     pygame.Rect(2970, 182, 70, 19),
     pygame.Rect(3040, 199, 70, 19),
     pygame.Rect(3110, 216, 70, 19),
+<<<<<<< HEAD
     pygame.Rect(pohybujici_prekazkax1, 216, 70, 19),
+=======
+    pygame.Rect(3200, 216, 70, 19),
+    pygame.Rect(3800, 216, 250, 197),
+    pygame.Rect(4100, 160, 60, 19),
+    pygame.Rect(4220, 340, 60, 19),
+    pygame.Rect(4300, 300, 60, 19),
+    pygame.Rect(4430, 300, 5, 20),
+    pygame.Rect(4560, 300, 5, 20),
+    pygame.Rect(4690, 300, 5, 20),
+    pygame.Rect(4820, 300, 5, 20),
+    pygame.Rect(4265, 300, 40, 59),
+    pygame.Rect(4920, 300, 60, 20),
+>>>>>>> origin/main
 ]
 
 
 
+<<<<<<< HEAD
 
 
 
 
+=======
+posledni_prekazka = prekazky[19]
+ 
+
+
+posledni_prekazkay = prekazky[29]
+
+  # Pro ověření, že funguje správně
+
+
+pohybujici_prekazka_smery = -2  # Začíná pohybem nahoru
+
+>>>>>>> origin/main
 
 # Načtení pozadí
 try:
@@ -101,7 +135,7 @@ while True:
     # Vytvoření Rect objektu pro postavu
     postava_rect = pygame.Rect(new_x_ctverec, new_y_ctverec, 50, 50)
 
-    # Ověření kolize X a Y zvlášť
+        # Ověření kolize X a Y zvlášť
     kolize_x = False
     kolize_y = False
     stoji_na_prekazce = False  
@@ -132,10 +166,52 @@ while True:
                 kolize_x = True
 
                 
+<<<<<<< HEAD
             
+=======
+    # Změna směru pohybu
+    pohyb_prekx = 2
+    if pohybujici_prekazkax1 <= 3200:
+        pohybujici_prekazka_smer = 2
+    elif pohybujici_prekazkax1 >= 3700:
+        pohybujici_prekazka_smer = -2
 
-                
+    # Posun překážky
+    pohybujici_prekazkax1 += pohybujici_prekazka_smer
 
+>>>>>>> origin/main
+
+    # Aktualizace polohy pohybující se překážky v seznamu
+    prekazky[19].x = pohybujici_prekazkax1
+        
+        
+       # Změna směru pohybu
+    pohyb_preky = 2
+    if pohybujici_prekazkay1 >= 300:
+        pohybujici_prekazka_smery = -2
+    elif pohybujici_prekazkay1 <= 100:
+        pohybujici_prekazka_smery = 2
+
+    # Posun překážky
+    pohybujici_prekazkay1 += pohybujici_prekazka_smery
+
+
+    # Aktualizace polohy pohybující se překážky v seznamu
+    prekazky[29].y = pohybujici_prekazkay1     
+
+
+    if (
+        postava_rect.bottom + y_velocity >= prekazky[29].top
+        and postava_rect.bottom <= prekazky[29].top + abs(y_velocity) + 5  # Tolerance pro přesnost dopadu
+        and postava_rect.right > prekazky[29].left + 5
+        and postava_rect.left < prekazky[29].right - 5
+    ):
+        new_y_ctverec = prekazky[29].top - 50  # Umístění přesně na překážku
+        y_velocity = pohybujici_prekazka_smery  # Pohyb spolu s překážkou
+        skace = False
+
+              
+            
     def stoji_na_prekazce_funkce(postava_rect, prekazky, y_velocity):
         for prekazka in prekazky:
             if (
@@ -197,6 +273,9 @@ while True:
     for prekazka in prekazky:
         pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))  
     
+    pygame.draw.rect(screen, (0, 255, 0), (posledni_prekazka.x - posun_sveta, posledni_prekazka.y, posledni_prekazka.width, posledni_prekazka.height))
+    pygame.draw.rect(screen, (0, 255, 0), (posledni_prekazkay.x, posledni_prekazkay.y, posledni_prekazkay.width, posledni_prekazkay.height))
+    
     font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
     text = "level 1"  # Text, který chcete vykreslit
     text_surface = font.render(text, True, (0, 0, 0))  # Bílý text
@@ -205,4 +284,4 @@ while True:
         
     pygame.display.update()
     
-    clock.tick(60)  
+    clock.tick(60) 
