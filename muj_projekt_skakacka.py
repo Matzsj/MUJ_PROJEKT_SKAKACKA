@@ -23,15 +23,10 @@ skace = False
 
 
 
-<<<<<<< HEAD
-pohybujici_prekazkax1 = 3200
-
-=======
 
 
 pohybujici_prekazkax1 = 3200
 pohybujici_prekazkay1 = 300
->>>>>>> origin/main
 
 
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
@@ -57,9 +52,6 @@ prekazky = [
     pygame.Rect(2970, 182, 70, 19),
     pygame.Rect(3040, 199, 70, 19),
     pygame.Rect(3110, 216, 70, 19),
-<<<<<<< HEAD
-    pygame.Rect(pohybujici_prekazkax1, 216, 70, 19),
-=======
     pygame.Rect(3200, 216, 70, 19),
     pygame.Rect(3800, 216, 250, 197),
     pygame.Rect(4100, 160, 60, 19),
@@ -71,17 +63,10 @@ prekazky = [
     pygame.Rect(4820, 300, 5, 20),
     pygame.Rect(4265, 300, 40, 59),
     pygame.Rect(4920, 300, 60, 20),
->>>>>>> origin/main
 ]
 
 
 
-<<<<<<< HEAD
-
-
-
-
-=======
 posledni_prekazka = prekazky[19]
  
 
@@ -93,7 +78,6 @@ posledni_prekazkay = prekazky[29]
 
 pohybujici_prekazka_smery = -2  # Začíná pohybem nahoru
 
->>>>>>> origin/main
 
 # Načtení pozadí
 try:
@@ -166,9 +150,6 @@ while True:
                 kolize_x = True
 
                 
-<<<<<<< HEAD
-            
-=======
     # Změna směru pohybu
     pohyb_prekx = 2
     if pohybujici_prekazkax1 <= 3200:
@@ -179,7 +160,6 @@ while True:
     # Posun překážky
     pohybujici_prekazkax1 += pohybujici_prekazka_smer
 
->>>>>>> origin/main
 
     # Aktualizace polohy pohybující se překážky v seznamu
     prekazky[19].x = pohybujici_prekazkax1
@@ -222,24 +202,9 @@ while True:
             ):
                 return True
         return False
-    
-    # Změna směru pohybu
-    pohyb_prekx = 2
-    if pohybujici_prekazkax1 <= 3200:
-        pohybujici_prekazka_smer = 2
-    elif pohybujici_prekazkax1 >= 3700:
-        pohybujici_prekazka_smer = -2
 
-    # Posun překážky
-    pohybujici_prekazkax1 += pohybujici_prekazka_smer
 
-    
-    # Aktualizace polohy pohybující se překážky v seznamu
-    prekazky[19].x = pohybujici_prekazkax1
 
-        
-    
-    
     stoji_na_prekazce = stoji_na_prekazce_funkce(postava_rect, prekazky, y_velocity)
 
     if stoji_na_prekazce:
