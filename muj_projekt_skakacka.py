@@ -17,7 +17,8 @@ rychlost = 5.65  # Rychlost pohybu
 
 gravitace = 1
 y_velocity = 0 
-vyska_skoku = - 12.6  # Skok
+vyska_skoku = -20
+#- 12.6  # Skok
 
 skace = False
 
@@ -63,6 +64,19 @@ prekazky = [
     pygame.Rect(4820, 300, 5, 20),
     pygame.Rect(4265, 300, 40, 59),
     pygame.Rect(4920, 300, 60, 20),
+    pygame.Rect(5100, 100, 250, 314),
+    pygame.Rect(5550, 300, 1100, 115),
+    pygame.Rect(5550, 0, 1100, 150),
+    pygame.Rect(6700, 300, 70, 20),
+    pygame.Rect(6850, 300, 70, 20),
+    pygame.Rect(7000, 300, 70, 20),
+    pygame.Rect(7150, 300, 70, 20),
+    pygame.Rect(7300, 300, 70, 20),
+    pygame.Rect(7450, 300, 70, 20),
+    pygame.Rect(7600, 300, 70, 20),
+    pygame.Rect(7770, 394, 70, 20),
+    pygame.Rect(7750, 314, 20, 100),
+    pygame.Rect(7840, 0, 500, 414),
 ]
 
 
