@@ -24,6 +24,12 @@ skace = False
 
 
 
+# Třída pro zivot
+class Zivot:
+    def __init__(self, x, y, radius):
+        self.x = x
+        self.y = y
+        self.radius = radius
 
 
 pohybujici_prekazkax1 = 3200
@@ -78,6 +84,31 @@ prekazky = [
     pygame.Rect(7750, 314, 20, 100),
     pygame.Rect(7840, 0, 500, 414),
 ]
+
+zivoty = [
+    (40, 40, 15),  # (x, y, radius)
+    (80, 40, 15),
+    (120, 40, 15),
+]
+
+
+
+
+spiky = [
+    pygame.Rect()
+    ]
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -251,6 +282,20 @@ while True:
     # Překážky
     for prekazka in prekazky:
         pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))  
+    
+    
+        
+    for zivot in zivoty:
+        x, y, radius = zivot  # Rozbal n-tici do proměnných
+        pygame.draw.circle(screen, (255, 0, 0), (x, y), radius)
+    
+    
+    
+    
+    
+    
+    
+    
     
     pygame.draw.rect(screen, (0, 255, 0), (posledni_prekazka.x - posun_sveta, posledni_prekazka.y, posledni_prekazka.width, posledni_prekazka.height))
     pygame.draw.rect(screen, (0, 255, 0), (posledni_prekazkay.x, posledni_prekazkay.y, posledni_prekazkay.width, posledni_prekazkay.height))
