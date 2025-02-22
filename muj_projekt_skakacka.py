@@ -1,10 +1,21 @@
 import sys
-import pygame 
+import pygame
+import time
 
 pygame.init() 
 
 rozliseni_vyska = 600
 rozliseni_sirka = 800
+
+
+
+
+posledni_kolize_cas = 0
+nesmrtelnost_cas = 1000
+
+
+
+
 
 barva_ctverce = (255, 0, 0)  # Červená barva pro čtverec
 barva_ocí = (255, 255, 255)   # Bílá barva pro oči
@@ -274,8 +285,7 @@ while True:
         # Pokud součet podtrojúhelníků odpovídá původní ploše, bod je uvnitř
         return abs(plocha_ABC - (plocha_ABP + plocha_BCP + plocha_CAP)) < 0.01
     
-    
-
+    je_v_kolizi = False  # Přidejte tuto proměnnou na začátek cyklu
 
     for spike in spiky:
         # Seznam bodů po obvodu postavy pro lepší detekci
@@ -287,14 +297,32 @@ while True:
 
         for bod in body_postavy:
             if bod_v_trojuhelniku(bod, spike):
-                print("Kolize s bodcem!")  # Výpis ihned při detekci
-                if cervena_zivot3 == (255, 0, 0):
-                    cervena_zivot3 = (0, 0, 0)
-                    new_x_ctverec = 100
-                elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
-                    cervena_zivot2 = (0, 0, 0)
-                        
-    
+                aktualni_cas = pygame.time.get_ticks()
+
+                # Zkontrolujte, zda je postava v kolizi a zda uplynul čas pro odebrání života
+                if not je_v_kolizi and aktualni_cas - posledni_kolize_cas > nesmrtelnost_cas:
+                    je_v_kolizi = True  # Nastavte, že postava je v kolizi
+                    posledni_kolize_cas = aktualni_cas
+                    
+                    print("Kolize s bodcem!")  # Výpis ihned při detekci
+                    if cervena_zivot3 == (255, 0, 0):
+                        cervena_zivot3 = (0, 0, 0)
+                        new_y_ctverec = 100
+                        new_x_ctverec = 100
+                    elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
+                        cervena_zivot2 = (0, 0, 0)
+                        cervena_zivot1 = (255, 0, 0)
+                        new_y_ctverec = 100
+                        new_x_ctverec = 100
+                    else:
+                        cervena_zivot1 = (0, 0, 0)
+                        new_y_ctverec = 100
+                        new_x_ctverec = 100
+
+    # Na konci herního cyklu resetujte stav kolize, pokud není postava v kolizi
+    if not je_v_kolizi:
+        je_v_kolizi = False
+
     
     
     
