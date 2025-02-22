@@ -22,14 +22,12 @@ vyska_skoku = -20
 
 skace = False
 
+cervena_zivot1 = (255, 0 , 0)
+cervena_zivot2 = (255, 0 , 0)
+cervena_zivot3 = (255, 0 , 0)
 
 
-# Třída pro zivot
-class Zivot:
-    def __init__(self, x, y, radius):
-        self.x = x
-        self.y = y
-        self.radius = radius
+
 
 
 pohybujici_prekazkax1 = 3200
@@ -93,10 +91,11 @@ zivoty = [
 
 
 
-
 spiky = [
-    pygame.Rect()
-    ]
+    [(550, 412), (599, 412), (573, 365)],  # Trojúhelník jako seznam bodů
+    [(700, 412), (750, 412), (725, 365)]   # Další trojúhelník
+]
+
 
 
 
@@ -208,8 +207,14 @@ while True:
 
     # Aktualizace polohy pohybující se překážky v seznamu
     prekazky[19].x = pohybujici_prekazkax1
-        
-        
+
+     
+     
+     
+     
+     
+     
+     
        # Změna směru pohybu
     pohyb_preky = 2
     if pohybujici_prekazkay1 >= 300:
@@ -249,7 +254,55 @@ while True:
         return False
 
 
+    def bod_v_trojuhelniku(bod, trojuhelnik):
+        # Převede body na vektory
+        A, B, C = map(pygame.math.Vector2, trojuhelnik)
+        P = pygame.math.Vector2(bod)
 
+        # Vypočítá plochu trojúhelníku pomocí determinantů
+        def plocha(X, Y, Z):
+            return abs((X.x * (Y.y - Z.y) + Y.x * (Z.y - X.y) + Z.x * (X.y - Y.y)) / 2.0)
+
+        # Celková plocha trojúhelníku ABC
+        plocha_ABC = plocha(A, B, C)
+
+        # Plochy podtrojúhelníků APB, BPC, CPA
+        plocha_ABP = plocha(A, B, P)
+        plocha_BCP = plocha(B, C, P)
+        plocha_CAP = plocha(C, A, P)
+
+        # Pokud součet podtrojúhelníků odpovídá původní ploše, bod je uvnitř
+        return abs(plocha_ABC - (plocha_ABP + plocha_BCP + plocha_CAP)) < 0.01
+    
+    
+
+
+    for spike in spiky:
+        # Seznam bodů po obvodu postavy pro lepší detekci
+        body_postavy = [
+            (postava_rect.left + i, postava_rect.top + j) 
+            for i in range(0, 51, 10)  # Vytvoří body podél šířky postavy
+            for j in range(0, 51, 10)  # Vytvoří body podél výšky postavy
+        ]
+
+        for bod in body_postavy:
+            if bod_v_trojuhelniku(bod, spike):
+                print("Kolize s bodcem!")  # Výpis ihned při detekci
+                if cervena_zivot3 == (255, 0, 0):
+                    cervena_zivot3 = (0, 0, 0)
+                    new_x_ctverec = 100
+                elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
+                    cervena_zivot2 = (0, 0, 0)
+                        
+    
+    
+    
+    
+    
+    
+    
+    
+    
     stoji_na_prekazce = stoji_na_prekazce_funkce(postava_rect, prekazky, y_velocity)
 
     if stoji_na_prekazce:
@@ -284,15 +337,18 @@ while True:
         pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))  
     
     
-        
-    for zivot in zivoty:
-        x, y, radius = zivot  # Rozbal n-tici do proměnných
-        pygame.draw.circle(screen, (255, 0, 0), (x, y), radius)
+
+    pygame.draw.circle(screen, cervena_zivot3, (40, 40), 15)
+    pygame.draw.circle(screen, cervena_zivot2, (80, 40), 15)
+    pygame.draw.circle(screen, cervena_zivot1, (120, 40), 15)
     
     
     
     
-    
+    for spike in spiky:
+        posunuty_spike = [(x - posun_sveta, y) for x, y in spike]  # Posuneme každý bod zvlášť
+        pygame.draw.polygon(screen, (127, 127, 127), posunuty_spike)
+
     
     
     
