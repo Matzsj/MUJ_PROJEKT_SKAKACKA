@@ -355,7 +355,8 @@ while True:
         return abs(plocha_ABC - (plocha_ABP + plocha_BCP + plocha_CAP)) < 0.01
     
     je_v_kolizi = False  # Přidejte tuto proměnnou na začátek cyklu
-
+    checkpoint_reached = False
+    
     for spike in spiky:
         # Seznam bodů po obvodu postavy pro lepší detekci
         body_postavy = [
@@ -378,15 +379,52 @@ while True:
                         cervena_zivot3 = (0, 0, 0)
                         new_y_ctverec = 100
                         new_x_ctverec = 100
+                        if len(prekazky) > 30:
+                            if not checkpoint_reached and postava_rect.right > prekazky[30].left:  
+                                checkpoint_reached = True  # Uložit dosažení checkpointu
+                                print("Checkpoint dosažen!")  
+                                new_x_ctverec = 5175
+                                new_y_ctverec = 0
+                                cervena_zivot1 = (255, 0, 0)
+                                cervena_zivot2 = (255, 0, 0)
+                                cervena_zivot3 = (255, 0, 0)
+                                if postava_rect.left < prekazka[30].left:
+                                    new_x_ctverec = 5175
+                                    new_y_ctverec = 0
+                                    
                     elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
                         cervena_zivot2 = (0, 0, 0)
                         cervena_zivot1 = (255, 0, 0)
                         new_y_ctverec = 100
                         new_x_ctverec = 100
+                        if len(prekazky) > 30:
+                            if not checkpoint_reached and postava_rect.right > prekazky[30].left:  
+                                checkpoint_reached = True  # Uložit dosažení checkpointu
+                                print("Checkpoint dosažen!")  
+                                new_x_ctverec = 5175
+                                new_y_ctverec = 0
+                                cervena_zivot1 = (255, 0, 0)
+                                cervena_zivot2 = (255, 0, 0)
+                                cervena_zivot3 = (255, 0, 0)
+                                if postava_rect.left < prekazka[30].left:
+                                    new_x_ctverec = 5175
+                                    new_y_ctverec = 0
                     else:
                         cervena_zivot1 = (0, 0, 0)
                         new_y_ctverec = 100
                         new_x_ctverec = 100
+                        if len(prekazky) > 30:
+                            if not checkpoint_reached and postava_rect.right > prekazky[30].left:  
+                                checkpoint_reached = True  # Uložit dosažení checkpointu
+                                print("Checkpoint dosažen!")  
+                                new_x_ctverec = 5175
+                                new_y_ctverec = 0
+                                cervena_zivot1 = (255, 0, 0)
+                                cervena_zivot2 = (255, 0, 0)
+                                cervena_zivot3 = (255, 0, 0)
+                                if postava_rect.left < prekazka[30].left:
+                                    new_x_ctverec = 5175
+                                    new_y_ctverec = 0
 
     # Na konci herního cyklu resetujte stav kolize, pokud není postava v kolizi
     if not je_v_kolizi:
@@ -447,7 +485,7 @@ while True:
         pygame.draw.polygon(screen, (127, 127, 127), posunuty_spike)
 
     
-    
+    pygame.draw.rect(screen, (255, 0, 0), (5100 - posun_sveta, 100, 250, 30)) 
     
     
     pygame.draw.rect(screen, (0, 255, 0), (posledni_prekazka.x - posun_sveta, posledni_prekazka.y, posledni_prekazka.width, posledni_prekazka.height))
@@ -459,6 +497,15 @@ while True:
     text_rect = text_surface.get_rect(center=(rozliseni_sirka // 2, 50))  # Umístění textu na obrazovku
     screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
         
+    
+    font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
+    text = "checkpoint"  # Text, který chcete vykreslit
+    text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+    text_rect = text_surface.get_rect(center=(5225 - posun_sveta, 200))  # Umístění textu na obrazovku
+    screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+    
+    
+    
     pygame.display.update()
     
     clock.tick(50) 
