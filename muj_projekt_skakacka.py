@@ -36,7 +36,15 @@ cervena_zivot1 = (255, 0 , 0)
 cervena_zivot2 = (255, 0 , 0)
 cervena_zivot3 = (255, 0 , 0)
 
+pygame.init()
 
+try:
+    image = pygame.image.load('heal.png').convert()
+    image = pygame.transform.scale(image, (200, 200))
+except pygame.error as e:
+    print(f"Chyba při načítání obrázku: {e}")
+    pygame.quit()
+    sys.exit()
 
 
 
@@ -290,8 +298,7 @@ while True:
 
      
      
-     
-     
+    
      
      
      
