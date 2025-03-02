@@ -1,6 +1,7 @@
 import sys
 import pygame
 import time
+import random
 
 pygame.init() 
 
@@ -8,13 +9,13 @@ rozliseni_vyska = 600
 rozliseni_sirka = 800
 
 
-
+boss_timer = 0
 
 posledni_kolize_cas = 0
 nesmrtelnost_cas = 1000
 
 
-
+zobraz_text = True
 
 
 barva_ctverce = (255, 0, 0)  # Červená barva pro čtverec
@@ -38,13 +39,9 @@ cervena_zivot3 = (255, 0 , 0)
 
 pygame.init()
 
-try:
-    image = pygame.image.load('heal.png').convert()
-    image = pygame.transform.scale(image, (200, 200))
-except pygame.error as e:
-    print(f"Chyba při načítání obrázku: {e}")
-    pygame.quit()
-    sys.exit()
+
+pohyb_bossa = False
+boss_smer = 1  # Počáteční směr pohybu (1 = doprava, -1 = doleva)
 
 
 
@@ -99,6 +96,17 @@ prekazky = [
     pygame.Rect(7770, 394, 70, 20),
     pygame.Rect(7750, 314, 20, 100),
     pygame.Rect(7840, 0, 500, 414),
+    pygame.Rect(9100, 0, 500, 414),
+    pygame.Rect(10500, 0, 500, 414),
+    pygame.Rect(9600, 313, 70, 20),
+    pygame.Rect(9720, 313, 70, 20),
+    pygame.Rect(9840, 313, 70, 20),
+    pygame.Rect(9960, 313, 100, 20),
+    pygame.Rect(10080, 313, 70, 20),
+    pygame.Rect(10200, 313, 70, 20),
+    pygame.Rect(10320, 313, 70, 20),
+    pygame.Rect(10440, 313, 130, 20),
+    
     
 ]
 
@@ -194,13 +202,36 @@ spiky = [
     [(7350, 412), (7400, 412), (7375, 365)],  # Trojúhelník 8 (dole)
     [(7450, 412), (7500, 412), (7475, 365)],  # Trojúhelník 9 (dole)
     [(7550, 412), (7600, 412), (7575, 365)],  # Trojúhelník 10 (dole)
-    [(7650, 412), (7700, 412), (7675, 365)],  # Trojúhelník 11 (dole)
+    [(7650, 412), (7700, 412), (7675, 365)],
+    [(9600, 412), (9648, 412), (9624, 365)],
+    [(9648, 412), (9696, 412), (9672, 365)],
+    [(9696, 412), (9744, 412), (9720, 365)],
+    [(9744, 412), (9792, 412), (9768, 365)],
+    [(9792, 412), (9840, 412), (9816, 365)],
+    [(9840, 412), (9888, 412), (9864, 365)],
+    [(9888, 412), (9936, 412), (9912, 365)],
+    [(9936, 412), (9984, 412), (9960, 365)],
+    [(9984, 412), (10032, 412), (10008, 365)],
+    [(10032, 412), (10080, 412), (10056, 365)],
+    [(10080, 412), (10128, 412), (10104, 365)],
+    [(10128, 412), (10176, 412), (10152, 365)],
+    [(10176, 412), (10224, 412), (10200, 365)],
+    [(10224, 412), (10272, 412), (10248, 365)],
+    [(10272, 412), (10320, 412), (10296, 365)],
+    [(10320, 412), (10368, 412), (10344, 365)],
+    [(10368, 412), (10416, 412), (10392, 365)],
+    [(10416, 412), (10464, 412), (10440, 365)],
 ]
 
 
 
 posledni_prekazka = prekazky[19]
  
+
+bossx = 9600
+bossy = 260
+boss_smer = 1  # Počáteční směr pohybu (1 znamená, že se pohybuje doprava)
+speed = 2
 
 
 posledni_prekazkay = prekazky[29]
@@ -222,11 +253,16 @@ except pygame.error as e:
 
 clock = pygame.time.Clock()  # Inicializace hodin
 
+
 while True:
     for udalost in pygame.event.get():
         if udalost.type == pygame.QUIT: 
             pygame.quit()
             sys.exit()   
+    
+    
+    # Kreslení
+    screen.blit(background_image, (0, 0))
 
     # Kontrola stisknutých kláves
     klavesy = pygame.key.get_pressed()
@@ -238,12 +274,20 @@ while True:
         new_x_ctverec -= rychlost
     if klavesy[pygame.K_d]:  
         new_x_ctverec += rychlost
-        
+     
+    posun_sveta = x_ctverec - rozliseni_sirka // 2 + 25  # Vypočítání posunu kamery
+
+     
     # Skok
     if klavesy[pygame.K_SPACE] and not skace:  
         y_velocity = vyska_skoku  
         skace = True  
+    
 
+        
+
+
+    
     # Gravitace
     new_y_ctverec += y_velocity  
     y_velocity += gravitace  
@@ -296,8 +340,29 @@ while True:
     # Aktualizace polohy pohybující se překážky v seznamu
     prekazky[19].x = pohybujici_prekazkax1
 
-     
-     
+    
+
+    # Kontrola stisknutí klávesy 'L'
+    if klavesy[pygame.K_l] and zobraz_text:
+        pohyb_bossa = True  # Spusť pohyb, pokud je stisknuta klávesa 'L'
+        zobraz_text = False
+    # Pokud je pohyb spuštěn, posuň překážku
+    if pohyb_bossa:
+        bossx += speed * boss_smer
+        textl = ' '
+        # Změna směru při dosažení hranic
+        if bossx <= 9620:  # Při dosažení levé hranice
+            boss_smer = 1  # Změň směr na doprava
+        elif bossx >= 10380:  # Při dosažení pravé hranice
+            boss_smer = -1  # Změň směr na doleva
+
+    if zobraz_text:
+        font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
+        textl = "zmáčkni L abys začal boss fight"  # Text, který chcete vykreslit
+        text_surface = font.render(textl, True, (0, 0, 0))  # Bílý text
+        text_rect = text_surface.get_rect(center=(10000 - posun_sveta, 200))  # Umístění textu na obrazovku
+        screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+
     
      
      
@@ -387,17 +452,19 @@ while True:
                         new_y_ctverec = 100
                         new_x_ctverec = 100
                         if len(prekazky) > 30:
-                            if not checkpoint_reached and postava_rect.right > prekazky[30].left:  
-                                checkpoint_reached = True  # Uložit dosažení checkpointu
-                                print("Checkpoint dosažen!")  
-                                new_x_ctverec = 5175
-                                new_y_ctverec = 0
-                                cervena_zivot1 = (255, 0, 0)
-                                cervena_zivot2 = (255, 0, 0)
-                                cervena_zivot3 = (255, 0, 0)
-                                if postava_rect.left < prekazka[30].left:
+                            for x in prekazky:
+                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 7770:  
+                                    checkpoint_reached = True  # Uložit dosažení checkpointu
+                                    print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
                                     new_y_ctverec = 0
+                                    cervena_zivot1 = (255, 0, 0)
+                                    cervena_zivot2 = (255, 0, 0)
+                                    cervena_zivot3 = (255, 0, 0)
+                                    if postava_rect.left < prekazky[30].left:
+                                        new_x_ctverec = 5175
+                                        new_y_ctverec = 0
+                    
                                     
                     elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
                         cervena_zivot2 = (0, 0, 0)
@@ -405,42 +472,48 @@ while True:
                         new_y_ctverec = 100
                         new_x_ctverec = 100
                         if len(prekazky) > 30:
-                            if not checkpoint_reached and postava_rect.right > prekazky[30].left:  
-                                checkpoint_reached = True  # Uložit dosažení checkpointu
-                                print("Checkpoint dosažen!")  
-                                new_x_ctverec = 5175
-                                new_y_ctverec = 0
-                                cervena_zivot1 = (255, 0, 0)
-                                cervena_zivot2 = (255, 0, 0)
-                                cervena_zivot3 = (255, 0, 0)
-                                if postava_rect.left < prekazka[30].left:
+                            for x in prekazky:
+                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 7770:  
+                                    checkpoint_reached = True  # Uložit dosažení checkpointu
+                                    print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
                                     new_y_ctverec = 0
+                                    cervena_zivot1 = (255, 0, 0)
+                                    cervena_zivot2 = (255, 0, 0)
+                                    cervena_zivot3 = (255, 0, 0)
+                                    if postava_rect.left < prekazky[30].left:
+                                        new_x_ctverec = 5175
+                                        new_y_ctverec = 0
                     else:
                         cervena_zivot1 = (0, 0, 0)
                         new_y_ctverec = 100
                         new_x_ctverec = 100
                         if len(prekazky) > 30:
-                            if not checkpoint_reached and postava_rect.right > prekazky[30].left:  
-                                checkpoint_reached = True  # Uložit dosažení checkpointu
-                                print("Checkpoint dosažen!")  
-                                new_x_ctverec = 5175
-                                new_y_ctverec = 0
-                                cervena_zivot1 = (255, 0, 0)
-                                cervena_zivot2 = (255, 0, 0)
-                                cervena_zivot3 = (255, 0, 0)
-                                if postava_rect.left < prekazka[30].left:
+                            for x in prekazky:
+                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 7770:  
+                                    checkpoint_reached = True  # Uložit dosažení checkpointu
+                                    print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
                                     new_y_ctverec = 0
+                                    cervena_zivot1 = (255, 0, 0)
+                                    cervena_zivot2 = (255, 0, 0)
+                                    cervena_zivot3 = (255, 0, 0)
+                                    if postava_rect.left < prekazky[30].left:
+                                        new_x_ctverec = 5175
+                                        new_y_ctverec = 0
 
     # Na konci herního cyklu resetujte stav kolize, pokud není postava v kolizi
     if not je_v_kolizi:
         je_v_kolizi = False
 
+
     
     
     
-    
+    if 7770 < new_x_ctverec < 7840 and new_x_ctverec >= 394:
+        new_x_ctverec = 10000
+        new_y_ctverec = 200
+
     
     
     
@@ -462,11 +535,9 @@ while True:
     y_ctverec = new_y_ctverec
 
     # Posun kamery
-    posun_sveta = x_ctverec - rozliseni_sirka // 2 + 25  # Vypočítání posunu kamery
+    
 
-    # Kreslení
-    screen.blit(background_image, (0, 0))
-
+    
     # Postava
     pygame.draw.rect(screen, barva_ctverce, (x_ctverec - posun_sveta, y_ctverec + 2, 50, 51))
     pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 15, y_ctverec + 15), 9.999)  
@@ -490,7 +561,47 @@ while True:
     for spike in spiky:
         posunuty_spike = [(x - posun_sveta, y) for x, y in spike]  # Posuneme každý bod zvlášť
         pygame.draw.polygon(screen, (127, 127, 127), posunuty_spike)
+    
 
+    
+    boss = pygame.Rect(bossx, bossy, 52, 52)
+    bosss = pygame.Rect(bossx - posun_sveta, bossy, 52, 52)
+    
+
+    # Vykreslení hitboxů pro ladění
+   
+    pygame.draw.rect(screen, (0, 0, 0), bosss)  # Zelený rámeček bosse
+
+       # Detekce kolize
+    if postava_rect.colliderect(boss):
+        print("Kolize s bossem!")
+        if cervena_zivot3 == (255, 0, 0):
+            cervena_zivot3 = (0, 0, 0)
+        elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
+            cervena_zivot2 = (0, 0, 0)
+            cervena_zivot1 = (255, 0, 0)
+        else:
+            cervena_zivot1 = (0, 0, 0)
+
+
+    # Můžeš zde přidat další logiku, např. ubrání života nebo konec hry
+    pygame.draw.circle(screen, barva_ocí, (bossx - posun_sveta + 18 , bossy + 17), 8),
+    pygame.draw.circle(screen, barva_zornic, (bossx - posun_sveta + 18, bossy + 17), 4),   
+    pygame.draw.circle(screen, barva_ocí, (bossx - posun_sveta + 36, bossy + 17), 8),  
+    pygame.draw.circle(screen, barva_zornic, (bossx - posun_sveta + 36, bossy + 17), 4),   
+
+    
+   
+    # Tady si dodělej, co se má stát
+
+
+
+    # Zde můžeš přidat další logiku pro vykreslování bosse nebo jiné herní mechaniky
+
+    
+    
+    
+    
     
     pygame.draw.rect(screen, (255, 0, 0), (5100 - posun_sveta, 100, 250, 30)) 
     
@@ -510,6 +621,14 @@ while True:
     text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
     text_rect = text_surface.get_rect(center=(5225 - posun_sveta, 200))  # Umístění textu na obrazovku
     screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+    
+    cerna = (0,0,0)
+        
+    if cervena_zivot1 == (0,0,0) and cervena_zivot2 == (0,0,0) and cervena_zivot3 == (0,0,0):
+        screen.fill((0, 0, 0))
+
+        
+
     
     
     
