@@ -660,10 +660,24 @@ while True:
     if boss_timer is not None:
         elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
 
-        if elapsed_time >= 60:
+        if elapsed_time >= 1:
             print("Uběhlo 30 sekund! Boss se zastaví.")
+            screen.fill((0, 0, 0))
+            pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
+            pygame.draw.rect(screen, (255, 255, 255), rect2, 2)
+            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+            text = "hrát znovu"  # Text, který chcete vykreslit
+            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+            text_rect = text_surface.get_rect(center=(220, 275))  # Umístění textu na obrazovku
+            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+            text = "ukončit hru"  # Text, který chcete vykreslit
+            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+            text_rect = text_surface.get_rect(center=(600, 275))  # Umístění textu na obrazovku
+            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+            
             pohyb_bossa = False
-            boss_timer = None  # Resetujeme časovač
+             # Resetujeme časovač
     
     pygame.display.update()
     
