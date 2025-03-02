@@ -9,7 +9,7 @@ rozliseni_vyska = 600
 rozliseni_sirka = 800
 
 
-boss_timer = 0
+boss_timer = None
 
 posledni_kolize_cas = 0
 nesmrtelnost_cas = 1000
@@ -17,6 +17,9 @@ nesmrtelnost_cas = 1000
 
 zobraz_text = True
 
+
+rect1 = pygame.Rect(120, 250, 200, 50)
+rect2 = pygame.Rect(500, 250, 200, 50)
 
 barva_ctverce = (255, 0, 0)  # Červená barva pro čtverec
 barva_ocí = (255, 255, 255)   # Bílá barva pro oči
@@ -41,7 +44,7 @@ pygame.init()
 
 
 pohyb_bossa = False
-boss_smer = 1  # Počáteční směr pohybu (1 = doprava, -1 = doleva)
+boss_smer = 3  # Počáteční směr pohybu (1 = doprava, -1 = doleva)
 
 
 
@@ -98,7 +101,7 @@ prekazky = [
     pygame.Rect(7840, 0, 500, 414),
     pygame.Rect(9100, 0, 500, 414),
     pygame.Rect(10500, 0, 500, 414),
-    pygame.Rect(9600, 313, 70, 20),
+    pygame.Rect(9600, 313, 1000, 20),
     pygame.Rect(9720, 313, 70, 20),
     pygame.Rect(9840, 313, 70, 20),
     pygame.Rect(9960, 313, 100, 20),
@@ -106,8 +109,6 @@ prekazky = [
     pygame.Rect(10200, 313, 70, 20),
     pygame.Rect(10320, 313, 70, 20),
     pygame.Rect(10440, 313, 130, 20),
-    
-    
 ]
 
 zivoty = [
@@ -453,7 +454,7 @@ while True:
                         new_x_ctverec = 100
                         if len(prekazky) > 30:
                             for x in prekazky:
-                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 7770:  
+                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 8000:  
                                     checkpoint_reached = True  # Uložit dosažení checkpointu
                                     print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
@@ -461,7 +462,7 @@ while True:
                                     cervena_zivot1 = (255, 0, 0)
                                     cervena_zivot2 = (255, 0, 0)
                                     cervena_zivot3 = (255, 0, 0)
-                                    if postava_rect.left < prekazky[30].left:
+                                    if postava_rect.left < prekazky[30].left and new_x_ctverec < 8000:
                                         new_x_ctverec = 5175
                                         new_y_ctverec = 0
                     
@@ -473,7 +474,7 @@ while True:
                         new_x_ctverec = 100
                         if len(prekazky) > 30:
                             for x in prekazky:
-                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 7770:  
+                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 8000:  
                                     checkpoint_reached = True  # Uložit dosažení checkpointu
                                     print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
@@ -481,7 +482,7 @@ while True:
                                     cervena_zivot1 = (255, 0, 0)
                                     cervena_zivot2 = (255, 0, 0)
                                     cervena_zivot3 = (255, 0, 0)
-                                    if postava_rect.left < prekazky[30].left:
+                                    if postava_rect.left < prekazky[30].left  and new_x_ctverec < 8000:
                                         new_x_ctverec = 5175
                                         new_y_ctverec = 0
                     else:
@@ -490,7 +491,7 @@ while True:
                         new_x_ctverec = 100
                         if len(prekazky) > 30:
                             for x in prekazky:
-                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 7770:  
+                                if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 8000:  
                                     checkpoint_reached = True  # Uložit dosažení checkpointu
                                     print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
@@ -498,7 +499,7 @@ while True:
                                     cervena_zivot1 = (255, 0, 0)
                                     cervena_zivot2 = (255, 0, 0)
                                     cervena_zivot3 = (255, 0, 0)
-                                    if postava_rect.left < prekazky[30].left:
+                                    if postava_rect.left < prekazky[30].left and new_x_ctverec < 8000:
                                         new_x_ctverec = 5175
                                         new_y_ctverec = 0
 
@@ -626,11 +627,43 @@ while True:
         
     if cervena_zivot1 == (0,0,0) and cervena_zivot2 == (0,0,0) and cervena_zivot3 == (0,0,0):
         screen.fill((0, 0, 0))
+        pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
+        pygame.draw.rect(screen, (255, 255, 255), rect2, 2)
+        font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+        text = "hrát znovu"  # Text, který chcete vykreslit
+        text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+        text_rect = text_surface.get_rect(center=(220, 275))  # Umístění textu na obrazovku
+        screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+        font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+        text = "ukončit hru"  # Text, který chcete vykreslit
+        text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+        text_rect = text_surface.get_rect(center=(600, 275))  # Umístění textu na obrazovku
+        screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
 
-        
+    if udalost.type == pygame.MOUSEBUTTONDOWN:
+            if rect1.collidepoint(udalost.pos):
+                screen.blit(background_image, (0, 0)) # Změna barvy obdélníku 1
+                new_y_ctverec = 100
+                new_x_ctverec = 200
+                cervena_zivot1 = (255, 0, 0)
+                cervena_zivot2 = (255, 0, 0)
+                cervena_zivot3 = (255, 0, 0)
+                pohyb_bossa = False
+            if rect2.collidepoint(udalost.pos):
+                pygame.quit()
+                sys.exit() 
+    
+    if pohyb_bossa and boss_timer is None:
+        boss_timer = pygame.time.get_ticks()
 
-    
-    
+    # Vypočítáme uplynulý čas (pouze pokud byl boss_timer nastaven)
+    if boss_timer is not None:
+        elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
+
+        if elapsed_time >= 60:
+            print("Uběhlo 30 sekund! Boss se zastaví.")
+            pohyb_bossa = False
+            boss_timer = None  # Resetujeme časovač
     
     pygame.display.update()
     
