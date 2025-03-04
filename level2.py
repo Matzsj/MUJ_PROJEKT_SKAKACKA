@@ -19,14 +19,14 @@ rect3 = pygame.Rect(296, 250, 200, 50)
 posledni_kolize_cas = 0
 nesmrtelnost_cas = 1000
 
-barva_ctverce = (255, 0, 0)  # Červená barva pro čtverec
-barva_ocí = (255, 255, 255)   # Bílá barva pro oči
-barva_zornic = (0, 0, 0)      # Černá barva pro zornice
+barva_ctverce = (255, 0, 0)  
+barva_ocí = (255, 255, 255)   
+barva_zornic = (0, 0, 0)      
 
 # Počáteční pozice čtverce
-x_ctverec = rozliseni_sirka // 2 - 25  # Střed čtverce
-y_ctverec = 363  # Počáteční výška na zemi
-rychlost = 5.65  # Rychlost pohybu
+x_ctverec = rozliseni_sirka // 2 - 25 
+y_ctverec = 344 
+rychlost = 5.65 
 
 
 gravitace = 1
@@ -47,12 +47,12 @@ boss_smer = 3  # Počáteční směr pohybu (1 = doprava, -1 = doleva)
 
 
 prekazky = [
-    pygame.Rect(500, 363, 50, 50),
+    pygame.Rect(500, 347, 50, 50),
     ]
 
 
 spiky = [
-    [(550, 412), (599, 412), (573, 365)],
+    [(550, 397), (599, 397), (573, 350)],
     ]
 
 zivoty = [
@@ -65,6 +65,16 @@ zivoty = [
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 
 
+# Načtení pozadí
+try:
+    background_image = pygame.image.load('level2_background.png').convert()
+    background_image = pygame.transform.scale(background_image, (rozliseni_sirka, rozliseni_vyska))
+except pygame.error as e:
+    print(f"Chyba při načítání obrázku: {e}")
+    pygame.quit()
+    sys.exit()
+
+
 clock = pygame.time.Clock()  # Inicializace hodin
 
 
@@ -74,7 +84,7 @@ while True:
             pygame.quit()
             sys.exit()
       
-    screen.fill((0, 0, 0))
+    screen.blit(background_image, (0, 0))
     
     # Kontrola stisknutých kláves
     klavesy = pygame.key.get_pressed()
@@ -212,8 +222,8 @@ while True:
         skace = False
 
     # Ověření, zda postava stojí na zemi
-    if not kolize_y and not stoji_na_prekazce and new_y_ctverec >= 363:  
-        new_y_ctverec = 363
+    if not kolize_y and not stoji_na_prekazce and new_y_ctverec >= 344:  
+        new_y_ctverec = 344
         y_velocity = 0
         skace = False
 
