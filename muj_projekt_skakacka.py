@@ -18,8 +18,9 @@ nesmrtelnost_cas = 1000
 zobraz_text = True
 
 
-rect1 = pygame.Rect(120, 250, 200, 50)
-rect2 = pygame.Rect(500, 250, 200, 50)
+rect1 = pygame.Rect(50, 250, 200, 50)
+rect2 = pygame.Rect(550, 250, 200, 50)
+rect3 = pygame.Rect(296, 250, 200, 50)
 
 barva_ctverce = (255, 0, 0)  # Červená barva pro čtverec
 barva_ocí = (255, 255, 255)   # Bílá barva pro oči
@@ -661,23 +662,47 @@ while True:
         elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
 
         if elapsed_time >= 1:
-            print("Uběhlo 30 sekund! Boss se zastaví.")
+            print("Uběhlo 60 sekund! Boss se zastaví.")
             screen.fill((0, 0, 0))
             pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
             pygame.draw.rect(screen, (255, 255, 255), rect2, 2)
+            pygame.draw.rect(screen, (255, 255, 255), rect3, 2)
             font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
             text = "hrát znovu"  # Text, který chcete vykreslit
             text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
-            text_rect = text_surface.get_rect(center=(220, 275))  # Umístění textu na obrazovku
+            text_rect = text_surface.get_rect(center=(150, 275))  # Umístění textu na obrazovku
             screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
             font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
             text = "ukončit hru"  # Text, který chcete vykreslit
             text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
-            text_rect = text_surface.get_rect(center=(600, 275))  # Umístění textu na obrazovku
+            text_rect = text_surface.get_rect(center=(652, 275))  # Umístění textu na obrazovku
             screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
-            
+            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+            text = "level 2"  # Text, který chcete vykreslit
+            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+            text_rect = text_surface.get_rect(center=(394, 275))  # Umístění textu na obrazovku
+            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
             pohyb_bossa = False
-             # Resetujeme časovač
+            if udalost.type == pygame.MOUSEBUTTONDOWN:
+                if rect1.collidepoint(udalost.pos):
+                    screen.blit(background_image, (0, 0)) # Změna barvy obdélníku 1
+                    new_y_ctverec = 100
+                    new_x_ctverec = 200
+                    cervena_zivot1 = (255, 0, 0)
+                    cervena_zivot2 = (255, 0, 0)
+                    cervena_zivot3 = (255, 0, 0)
+                    pohyb_bossa = False
+                if rect2.collidepoint(udalost.pos):
+                    pygame.quit()
+                    sys.exit()
+                if rect3.collidepoint(udalost.pos):
+                    pygame.quit()
+                    subprocess.run(["python", "level2.py"])
+                    sys.exit()
+
+
+            
+            
     
     pygame.display.update()
     
