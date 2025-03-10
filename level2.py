@@ -105,8 +105,8 @@ prekazky = [
     pygame.Rect(9000, 157, 40, 240),
     pygame.Rect(9150, 157, 200, 240),
     pygame.Rect(9400, 157, 70, 20),
-    pygame.Rect(10450, 157, 70, 20),
-    pygame.Rect(10570, 157, 70, 20),
+    pygame.Rect(10980, 157, 70, 20),
+    
     pygame.Rect(11050, 157, 200, 240),
     pygame.Rect(11500, 347, 120, 50),
     pygame.Rect(11740, 347, 120, 50),
@@ -201,10 +201,16 @@ spiky = [
 [(5916, 396), (5965, 396), (5940, 349)],
 [(5972, 396), (6021, 396), (5996, 349)],
 
-[(8739, 396), (8788, 396), (8763, 349)],
-[(8781, 396), (8830, 396), (8796, 349)],
-[(8828, 396), (8877, 396), (8852, 349)],
-[(8884, 396), (8933, 396), (8908, 349)],
+[(8746, 396), (8795, 396), (8770, 349)],
+
+[(8848, 396), (8897, 396), (8872, 349)],
+
+[(8944, 396), (8993, 396), (8968, 349)],
+
+
+[(9039, 396), (9088, 396), (9063, 349)],
+[(9097, 396), (9146, 396), (9121, 349)],
+
 
 
     
@@ -217,6 +223,12 @@ zivoty = [
 ]
 
 pohybujici_prekazkax1 = 2200
+
+pohybujici_prekazkax2 = 9400
+
+pohybujici_prekazkax3 = 10980
+
+
 
 screen = pygame.display.set_mode((rozliseni_sirka, rozliseni_vyska))
 
@@ -453,6 +465,51 @@ while True:
     # Aktualizace polohy pohybující se překážky v seznamu
     prekazky[6].x = pohybujici_prekazkax1
     
+        
+    
+    pohyb_prekx = 2
+    if pohybujici_prekazkax2 <= 9400:
+        pohybujici_prekazka_smer1 = 4
+    elif pohybujici_prekazkax2 >= 10145:
+        pohybujici_prekazka_smer1 = -4
+        
+    
+
+    # Posun překážky
+    pohybujici_prekazkax2 += pohybujici_prekazka_smer1
+
+
+    # Aktualizace polohy pohybující se překážky v seznamu
+    prekazky[-17].x = pohybujici_prekazkax2
+    
+        
+    pohyb_prekx = 2
+    if pohybujici_prekazkax3 <= 10235:
+        pohybujici_prekazka_smer2 = 4
+    elif pohybujici_prekazkax3 >= 10980:
+        pohybujici_prekazka_smer2 = -4
+        
+    
+
+    # Posun překážky
+    pohybujici_prekazkax3 += pohybujici_prekazka_smer2
+
+
+    # Aktualizace polohy pohybující se překážky v seznamu
+    prekazky[-16].x = pohybujici_prekazkax3
+    
+    
+            
+
+    
+    
+
+    
+    
+    
+    
+    
+    
     
     
     for spike in spiky:
@@ -511,4 +568,4 @@ while True:
     
     pygame.display.update()
     
-    clock.tick(50) 
+    clock.tick(60) 
