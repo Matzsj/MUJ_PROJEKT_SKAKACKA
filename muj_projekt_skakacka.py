@@ -513,7 +513,8 @@ while True:
 
     
     
-    
+    print("Aktuální x:", new_x_ctverec)
+
     if 7770 < new_x_ctverec < 7840 and new_x_ctverec >= 394:
         new_x_ctverec = 10000
         new_y_ctverec = 200
