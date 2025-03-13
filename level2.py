@@ -9,8 +9,13 @@ pygame.init()
 rozliseni_vyska = 600
 rozliseni_sirka = 800
 
+boss_timer = None
 
+zobraz_text = True
 
+pohyb_bossa = False
+boss_smer = 4
+boss_smer2 = -4
 
 rect1 = pygame.Rect(50, 250, 200, 50)
 rect2 = pygame.Rect(550, 250, 200, 50)
@@ -27,13 +32,13 @@ barva_zornic = (0, 0, 0)
 # Počáteční pozice čtverce
 x_ctverec = rozliseni_sirka // 2 - 25 
 y_ctverec = 344 
-rychlost = 25
-#6
+rychlost = 50
+
 
 
 gravitace = 1
 y_velocity = 0 
-vyska_skoku = -60
+vyska_skoku = - 100
 #- 12.6  # Skok
 
 skace = False
@@ -44,6 +49,15 @@ cervena_zivot3 = (255, 0 , 0)
 
 pygame.init()
 
+
+bossx = 19600
+bossy = 218
+boss_smer = 1  # Počáteční směr pohybu (1 znamená, že se pohybuje doprava)
+speed = 2
+speed2 = 2
+
+bossx2 = 20430
+bossy2 = 135
 
 
 pohyb_bossa = False
@@ -124,6 +138,10 @@ prekazky = [
     pygame.Rect(14900, 327, 5, 65),
     pygame.Rect(19100, 0, 500, 397),
     pygame.Rect(20500, 0, 500, 397),
+    pygame.Rect(19100, 290, 1400, 8),
+    pygame.Rect(19600, 205, 70, 8),
+    pygame.Rect(20430, 205, 70, 8),
+    
     ]
 
 
@@ -592,14 +610,91 @@ while True:
 
     
     
+        # Kontrola stisknutí klávesy 'L'
+    if klavesy[pygame.K_l] and zobraz_text:
+        pohyb_bossa = True  # Spusť pohyb, pokud je stisknuta klávesa 'L'
+        zobraz_text = False
+    # Pokud je pohyb spuštěn, posuň překážku
+    if pohyb_bossa:
+        bossx += speed * boss_smer
+        textl = ' '
+        # Změna směru při dosažení hranic
+        if bossx <= 19600:  # Při dosažení levé hranice
+            boss_smer = 3  # Změň směr na doprava
+        elif bossx >= 20430:  # Při dosažení pravé hranice
+            boss_smer = -3  # Změň směr na doleva
+            
+            
+         # Kontrola stisknutí klávesy 'L'
+    if klavesy[pygame.K_l] and zobraz_text:
+        pohyb_bossa = True  # Spusť pohyb, pokud je stisknuta klávesa 'L'
+        zobraz_text = False
+    # Pokud je pohyb spuštěn, posuň překážku
+    if pohyb_bossa:
+        bossx2 += speed2 * boss_smer2
+        textl = ' '
+        # Změna směru při dosažení hranic
+        if bossx2 <= 19600:  # Při dosažení levé hranice
+            boss_smer2 = 3  # Změň směr na doprava
+        elif bossx2 >= 20430:  # Při dosažení pravé hranice
+            boss_smer2 = -3  # Změň směr na doleva
+
+    if zobraz_text:
+        font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
+        textl = "zmáčkni L abys začal boss fight"  # Text, který chcete vykreslit
+        text_surface = font.render(textl, True, (0, 0, 0))  # Bílý text
+        text_rect = text_surface.get_rect(center=(20000 - posun_sveta, 200))  # Umístění textu na obrazovku
+        screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+
+
+    
+    
+    
+    boss = pygame.Rect(bossx, bossy, 70, 70)
+    bosss = pygame.Rect(bossx - posun_sveta, bossy, 70, 70)
+    
+    boss2 = pygame.Rect(bossx2, bossy2, 70, 70)
+    bosss2 = pygame.Rect(bossx2 - posun_sveta, bossy2, 70, 70)
+    
+
+    # Vykreslení hitboxů pro ladění
+   
+    pygame.draw.rect(screen, (0, 0, 0), bosss) 
+    pygame.draw.rect(screen, (0, 0, 0), bosss2)  
+
+       # Detekce kolize
+    if postava_rect.colliderect(boss):
+        print("Kolize s bossem!")
+        if cervena_zivot3 == (255, 0, 0):
+            cervena_zivot3 = (0, 0, 0)
+        elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
+            cervena_zivot2 = (0, 0, 0)
+            cervena_zivot1 = (255, 0, 0)
+        else:
+            cervena_zivot1 = (0, 0, 0)
+
+
+    # Můžeš zde přidat další logiku, např. ubrání života nebo konec hry
+    pygame.draw.circle(screen, barva_ocí, (bossx - posun_sveta + 22 , bossy + 25), 12),
+    pygame.draw.circle(screen, barva_zornic, (bossx - posun_sveta + 22, bossy + 25), 6),   
+    pygame.draw.circle(screen, barva_ocí, (bossx - posun_sveta + 50, bossy + 25), 12),  
+    pygame.draw.circle(screen, barva_zornic, (bossx - posun_sveta + 50, bossy + 25), 6),
+    
+    pygame.draw.circle(screen, barva_ocí, (bossx2 - posun_sveta + 22 , bossy2 + 25), 12),
+    pygame.draw.circle(screen, barva_zornic, (bossx2 - posun_sveta + 22, bossy2 + 25), 6),   
+    pygame.draw.circle(screen, barva_ocí, (bossx2 - posun_sveta + 50, bossy2 + 25), 12),  
+    pygame.draw.circle(screen, barva_zornic, (bossx2 - posun_sveta + 50, bossy2 + 25), 6),
+
 
     
     
     
     
-    
-    
-    
+    font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
+    text = "checkpoint"  # Text, který chcete vykreslit
+    text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+    text_rect = text_surface.get_rect(center=(9250 - posun_sveta, 200))  # Umístění textu na obrazovku
+    screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
     
     for spike in spiky:
         posunuty_spike = [(x - posun_sveta, y) for x, y in spike]  # Posuneme každý bod zvlášť
@@ -651,8 +746,41 @@ while True:
             cervena_zivot2 = (0, 0, 0)
             cervena_zivot1 = (0, 0, 0)
 
+    
+    if pohyb_bossa and boss_timer is None:
+        boss_timer = pygame.time.get_ticks()
 
-                        
+    # Vypočítáme uplynulý čas (pouze pokud byl boss_timer nastaven)
+    if boss_timer is not None:
+        elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
+
+        if elapsed_time >= 65:
+            print("Uběhlo 60 sekund! Boss se zastaví.")
+            screen.fill((0, 0, 0))
+            pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
+            pygame.draw.rect(screen, (255, 255, 255), rect2, 2)
+            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+            text = 'Hrát znovu'  # Text, který chcete vykreslit
+            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+            text_rect = text_surface.get_rect(center=(150, 275))  # Umístění textu na obrazovku
+            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+            text = "ukončit hru"  # Text, který chcete vykreslit
+            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+            text_rect = text_surface.get_rect(center=(655, 275))  # Umístění textu na obrazovku
+            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+            pohyb_bossa = False
+            
+                
+    if udalost.type == pygame.MOUSEBUTTONDOWN:    
+            if rect2.collidepoint(udalost.pos):
+                pygame.quit()
+                sys.exit()
+            if rect1.collidepoint(udalost.pos):
+                pygame.quit()
+                subprocess.run(["python", "muj_projekt_skakacka.py"])
+                sys.exit()
+             
           
     
     pygame.display.update()

@@ -49,7 +49,7 @@ pygame.init()
 pohyb_bossa = False
 boss_smer = 3  # Počáteční směr pohybu (1 = doprava, -1 = doleva)
 
-
+checkpoint_reached2 = False
 
 pohybujici_prekazkax1 = 3200
 pohybujici_prekazkay1 = 300
@@ -433,6 +433,16 @@ while True:
     je_v_kolizi = False  # Přidejte tuto proměnnou na začátek cyklu
     checkpoint_reached = False
     
+    
+    
+    if klavesy[pygame.K_c] and 5100 < new_x_ctverec < 5350 and checkpoint_reached2 == False:
+        checkpoint_reached2 = True
+        cervena_zivot1 = (255, 0, 0)
+        cervena_zivot2 = (255, 0, 0)
+        cervena_zivot3 = (255, 0, 0)
+    
+    
+    
     for spike in spiky:
         # Seznam bodů po obvodu postavy pro lepší detekci
         body_postavy = [
@@ -462,12 +472,7 @@ while True:
                                     print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
                                     new_y_ctverec = 0
-                                    cervena_zivot1 = (255, 0, 0)
-                                    cervena_zivot2 = (255, 0, 0)
-                                    cervena_zivot3 = (255, 0, 0)
-                                    if postava_rect.left < prekazky[30].left and new_x_ctverec < 8000:
-                                        new_x_ctverec = 5175
-                                        new_y_ctverec = 0
+
                     
                                     
                     elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
@@ -482,12 +487,7 @@ while True:
                                     print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
                                     new_y_ctverec = 0
-                                    cervena_zivot1 = (255, 0, 0)
-                                    cervena_zivot2 = (255, 0, 0)
-                                    cervena_zivot3 = (255, 0, 0)
-                                    if postava_rect.left < prekazky[30].left  and new_x_ctverec < 8000:
-                                        new_x_ctverec = 5175
-                                        new_y_ctverec = 0
+
                     else:
                         cervena_zivot1 = (0, 0, 0)
                         new_y_ctverec = 100
@@ -499,12 +499,7 @@ while True:
                                     print("Checkpoint dosažen!")  
                                     new_x_ctverec = 5175
                                     new_y_ctverec = 0
-                                    cervena_zivot1 = (255, 0, 0)
-                                    cervena_zivot2 = (255, 0, 0)
-                                    cervena_zivot3 = (255, 0, 0)
-                                    if postava_rect.left < prekazky[30].left and new_x_ctverec < 8000:
-                                        new_x_ctverec = 5175
-                                        new_y_ctverec = 0
+
 
     # Na konci herního cyklu resetujte stav kolize, pokud není postava v kolizi
     if not je_v_kolizi:
@@ -513,8 +508,7 @@ while True:
 
     
     
-    print("Aktuální x:", new_x_ctverec)
-
+    
     if 7770 < new_x_ctverec < 7840 and new_x_ctverec >= 394:
         new_x_ctverec = 10000
         new_y_ctverec = 200
@@ -655,7 +649,7 @@ while True:
     if boss_timer is not None:
         elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
 
-        if elapsed_time >= 1:
+        if elapsed_time >= 60:
             print("Uběhlo 60 sekund! Boss se zastaví.")
             screen.fill((0, 0, 0))
             pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
