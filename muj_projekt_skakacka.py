@@ -19,8 +19,12 @@ nesmrtelnost_cas = 1000
 zobraz_text = True
 
 
+zobraz_text2 = True
+
 rect1 = pygame.Rect(50, 250, 200, 50)
+rect12 = pygame.Rect(50, 200, 200, 50)
 rect2 = pygame.Rect(550, 250, 200, 50)
+rect22 = pygame.Rect(550, 200, 200, 50)
 
 
 
@@ -31,11 +35,13 @@ barva_zornic = (0, 0, 0)      # Černá barva pro zornice
 # Počáteční pozice čtverce
 x_ctverec = rozliseni_sirka // 2 - 25  # Střed čtverce
 y_ctverec = 363  # Počáteční výška na zemi
-rychlost = 5.65  # Rychlost pohybu
+rychlost = 30
+#5.65  # Rychlost pohybu
 
 gravitace = 1
 y_velocity = 0 
-vyska_skoku = - 12.6  # Skok
+vyska_skoku = -25
+#- 12.6  # Skok
 
 skace = False
 
@@ -433,15 +439,25 @@ while True:
     je_v_kolizi = False  # Přidejte tuto proměnnou na začátek cyklu
     checkpoint_reached = False
     
+    if klavesy[pygame.K_c] and 5100 < new_x_ctverec < 5350 :
+        zobraz_text2 = False
+    
+    if zobraz_text2:
+        font = pygame.font.Font(None, 22)  # None znamená výchozí font, 36 je velikost písma
+        textf = "zmackni C pro vyhealovani (max 1x)"  # Text, který chcete vykreslit
+        text_surface = font.render(textf, True, (0, 0, 0))  # Bílý text
+        text_rect = text_surface.get_rect(center=(5225 - posun_sveta, 70))  # Umístění textu na obrazovku
+        screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
     
     
     if klavesy[pygame.K_c] and 5100 < new_x_ctverec < 5350 and checkpoint_reached2 == False:
         checkpoint_reached2 = True
+        
         cervena_zivot1 = (255, 0, 0)
         cervena_zivot2 = (255, 0, 0)
         cervena_zivot3 = (255, 0, 0)
     
-    
+   
     
     for spike in spiky:
         # Seznam bodů po obvodu postavy pro lepší detekci
@@ -611,9 +627,47 @@ while True:
     text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
     text_rect = text_surface.get_rect(center=(5225 - posun_sveta, 200))  # Umístění textu na obrazovku
     screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+
+    
+
     
     cerna = (0,0,0)
         
+
+    
+    if pohyb_bossa and boss_timer is None:
+        boss_timer = pygame.time.get_ticks()
+
+    # Vypočítáme uplynulý čas (pouze pokud byl boss_timer nastaven)
+    if boss_timer is not None:
+        elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
+
+        if elapsed_time >= 1:
+            print("Uběhlo 60 sekund! Boss se zastaví.")
+            screen.fill((0, 0, 0))
+            pygame.draw.rect(screen, (255, 255, 255), rect12, 2)
+            pygame.draw.rect(screen, (255, 255, 255), rect22, 2)
+            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+            text = 'level 2'  # Text, který chcete vykreslit
+            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+            text_rect = text_surface.get_rect(center=(150, 225))  # Umístění textu na obrazovku
+            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
+            text = "ukončit hru"  # Text, který chcete vykreslit
+            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+            text_rect = text_surface.get_rect(center=(655, 225))  # Umístění textu na obrazovku
+            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+            pohyb_bossa = False
+    
+    if udalost.type == pygame.MOUSEBUTTONDOWN:    
+            if rect22.collidepoint(udalost.pos):
+                pygame.quit()
+                sys.exit()
+            if rect12.collidepoint(udalost.pos):
+                pygame.quit()
+                subprocess.run(["python", "level2.py"])
+                sys.exit()
+
     if cervena_zivot1 == (0,0,0) and cervena_zivot2 == (0,0,0) and cervena_zivot3 == (0,0,0):
         screen.fill((0, 0, 0))
         pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
@@ -631,52 +685,14 @@ while True:
 
     if udalost.type == pygame.MOUSEBUTTONDOWN:
             if rect1.collidepoint(udalost.pos):
-                screen.blit(background_image, (0, 0)) # Změna barvy obdélníku 1
-                new_y_ctverec = 100
-                new_x_ctverec = 200
-                cervena_zivot1 = (255, 0, 0)
-                cervena_zivot2 = (255, 0, 0)
-                cervena_zivot3 = (255, 0, 0)
-                pohyb_bossa = False
+                pygame.quit()
+                subprocess.run(["python", "muj_projekt_skakacka.py"])
+                sys.exit()
+
             if rect2.collidepoint(udalost.pos):
                 pygame.quit()
                 sys.exit() 
-    
-    if pohyb_bossa and boss_timer is None:
-        boss_timer = pygame.time.get_ticks()
-
-    # Vypočítáme uplynulý čas (pouze pokud byl boss_timer nastaven)
-    if boss_timer is not None:
-        elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
-
-        if elapsed_time >= 60:
-            print("Uběhlo 60 sekund! Boss se zastaví.")
-            screen.fill((0, 0, 0))
-            pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
-            pygame.draw.rect(screen, (255, 255, 255), rect2, 2)
-            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
-            text = 'level 2'  # Text, který chcete vykreslit
-            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
-            text_rect = text_surface.get_rect(center=(150, 275))  # Umístění textu na obrazovku
-            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
-            font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
-            text = "ukončit hru"  # Text, který chcete vykreslit
-            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
-            text_rect = text_surface.get_rect(center=(655, 275))  # Umístění textu na obrazovku
-            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
-            pohyb_bossa = False
-            
-    if udalost.type == pygame.MOUSEBUTTONDOWN:    
-            if rect2.collidepoint(udalost.pos):
-                pygame.quit()
-                sys.exit()
-            if rect1.collidepoint(udalost.pos):
-                pygame.quit()
-                subprocess.run(["python", "level2.py"])
-                sys.exit()
-
-
-            
+        
             
     
     pygame.display.update()

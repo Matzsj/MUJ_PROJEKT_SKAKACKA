@@ -11,7 +11,21 @@ rozliseni_sirka = 800
 
 boss_timer = None
 
+speed_boost_visible = True
+
+jump_boost_visible = True
+
+speed_time = None
+jump_time = None
+
+checkpoint_reached2 = False
+
+texture = pygame.image.load('stone_textury.png')
+# Předpokládáme, že obrázek má velikost 50x50 pixelů (nebo jakoukoli jinou)
+texture = pygame.transform.scale(texture, (50, 50))  
+
 zobraz_text = True
+zobraz_text2 = True
 
 pohyb_bossa = False
 boss_smer = 4
@@ -32,14 +46,13 @@ barva_zornic = (0, 0, 0)
 # Počáteční pozice čtverce
 x_ctverec = rozliseni_sirka // 2 - 25 
 y_ctverec = 344 
-rychlost = 50
+rychlost = 6
 
 
 
 gravitace = 1
 y_velocity = 0 
-vyska_skoku = - 100
-#- 12.6  # Skok
+vyska_skoku = - 12.6  # Skok
 
 skace = False
 
@@ -65,6 +78,7 @@ boss_smer = 3  # Počáteční směr pohybu (1 = doprava, -1 = doleva)
 
 
 prekazky = [
+    
     pygame.Rect(0, 347, 50, 50),
     pygame.Rect(-100, 290, 50, 107),
     pygame.Rect(-200, 233, 50, 107),
@@ -141,12 +155,18 @@ prekazky = [
     pygame.Rect(19100, 290, 1400, 8),
     pygame.Rect(19600, 205, 70, 8),
     pygame.Rect(20430, 205, 70, 8),
+    pygame.Rect(-900, 0, 500, 397),
     
     ]
 
 
 spiky = [
-
+[(-400, 396), (-351, 396), (-376, 349)],
+[(-336, 396), (-287, 396), (-312, 349)],
+[(-272, 396), (-223, 396), (-248, 349)],
+[(-208, 396), (-159, 396), (-184, 349)],
+[(-154, 396), (-105, 396), (-130, 349)],
+[(-50, 396), (-1, 396), (-26, 349)],
 [(542, 396), (591, 396), (566, 349)],
 [(598, 396), (647, 396), (622, 349)],
 [(654, 396), (703, 396), (678, 349)],
@@ -340,7 +360,23 @@ except pygame.error as e:
     print(f"Chyba při načítání obrázku: {e}")
     pygame.quit()
     sys.exit()
+    
+# Načtení pozadí
+try:
+    speed_boost = pygame.image.load('speed_boost.png').convert()
+    speed_boost = pygame.transform.scale(speed_boost, (40, 40))
+except pygame.error as e:
+    print(f"Chyba při načítání obrázku: {e}")
+    pygame.quit()
+    sys.exit()
 
+try:
+    jump_boost = pygame.image.load('jump_boost.png').convert()
+    jump_boost = pygame.transform.scale(jump_boost, (40, 40))
+except pygame.error as e:
+    print(f"Chyba při načítání obrázku: {e}")
+    pygame.quit()
+    sys.exit()
 
 clock = pygame.time.Clock()  # Inicializace hodin
 
@@ -352,6 +388,8 @@ while True:
             sys.exit()
       
     screen.blit(background_image, (0, 0))
+    
+    
     
     # Kontrola stisknutých kláves
     klavesy = pygame.key.get_pressed()
@@ -370,6 +408,56 @@ while True:
     if klavesy[pygame.K_SPACE] and not skace:  
         y_velocity = vyska_skoku  
         skace = True  
+    
+    
+
+            
+    if speed_boost_visible == True:
+        screen.blit(speed_boost, (11130 - posun_sveta , 90))
+    
+    if 11130 < new_x_ctverec < 11170:
+        speed_time = pygame.time.get_ticks()
+        rychlost = 11
+        speed_boost_visible = False
+
+    
+   
+        
+
+    # Vypočítáme uplynulý čas (pouze pokud byl boss_timer nastaven)
+    if speed_time is not None:
+        elapsed_time2 = (pygame.time.get_ticks() - speed_time) // 1000
+        
+        if elapsed_time2 >= 5:
+            rychlost = 6
+    
+        
+    #---------------------
+    
+    
+    
+    if jump_boost_visible == True:
+        screen.blit(jump_boost, (5070 - posun_sveta , 210))
+    
+    if 5070 < new_x_ctverec < 5110:
+        jump_time = pygame.time.get_ticks()
+        vyska_skoku = -18
+        jump_boost_visible = False
+
+    
+   
+        
+
+    # Vypočítáme uplynulý čas (pouze pokud byl boss_timer nastaven)
+    if jump_time is not None:
+        elapsed_time3 = (pygame.time.get_ticks() - jump_time) // 1000
+        
+        if elapsed_time3 >= 9:
+            vyska_skoku = -12.6
+    
+    
+        
+    
     
     new_y_ctverec += y_velocity  
     y_velocity += gravitace  
@@ -406,7 +494,25 @@ while True:
         pohyblive_y[i] += pohyblive_smery[i]
         prekazky[i].y = pohyblive_y[i]
 
+    
+    
+    if klavesy[pygame.K_c] and 9250 < new_x_ctverec < 9450 :
+        zobraz_text2 = False
 
+    if zobraz_text2:
+        font = pygame.font.Font(None, 22)  # None znamená výchozí font, 36 je velikost písma
+        textf = "zmackni C pro vyhealovani (max 1x)"  # Text, který chcete vykreslit
+        text_surface = font.render(textf, True, (0, 0, 0))  # Bílý text
+        text_rect = text_surface.get_rect(center=(9250 - posun_sveta, 85))  # Umístění textu na obrazovku
+        screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+    
+    
+    if klavesy[pygame.K_c] and 9250 < new_x_ctverec < 9450 and checkpoint_reached2 == False:
+        checkpoint_reached2 = True
+        
+        cervena_zivot1 = (255, 0, 0)
+        cervena_zivot2 = (255, 0, 0)
+        cervena_zivot3 = (255, 0, 0)
 
     for prekazka in prekazky:
         if postava_rect.colliderect(prekazka):
@@ -490,17 +596,36 @@ while True:
                         cervena_zivot3 = (0, 0, 0)
                         new_y_ctverec = 100
                         new_x_ctverec = 100
-                     
+                        if len(prekazky) > 51:
+                            for x in prekazky:
+                                if not checkpoint_reached and postava_rect.right > prekazky[51].left and new_x_ctverec < 9350:  
+                                    checkpoint_reached = True  # Uložit dosažení checkpointu
+                                    print("Checkpoint dosažen!")  
+                                    new_x_ctverec = 9250
+                                    new_y_ctverec = 0
                     elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
                         cervena_zivot2 = (0, 0, 0)
                         cervena_zivot1 = (255, 0, 0)
                         new_y_ctverec = 100
                         new_x_ctverec = 100
+                        if len(prekazky) > 51:
+                            for x in prekazky:
+                                if not checkpoint_reached and postava_rect.right > prekazky[51].left and new_x_ctverec < 9350:  
+                                    checkpoint_reached = True  # Uložit dosažení checkpointu
+                                    print("Checkpoint dosažen!")  
+                                    new_x_ctverec = 9250
+                                    new_y_ctverec = 0
                     else:
                         cervena_zivot1 = (0, 0, 0)
                         new_y_ctverec = 100
                         new_x_ctverec = 100   
-    
+                        if len(prekazky) > 51:
+                            for x in prekazky:
+                                if not checkpoint_reached and postava_rect.right > prekazky[51].left and new_x_ctverec < 9350:  
+                                    checkpoint_reached = True  # Uložit dosažení checkpointu
+                                    print("Checkpoint dosažen!")  
+                                    new_x_ctverec = 9250
+                                    new_y_ctverec = 0
     
     
        # Na konci herního cyklu resetujte stav kolize, pokud není postava v kolizi
@@ -635,9 +760,9 @@ while True:
         textl = ' '
         # Změna směru při dosažení hranic
         if bossx2 <= 19600:  # Při dosažení levé hranice
-            boss_smer2 = 3  # Změň směr na doprava
+            boss_smer2 = 4.3  # Změň směr na doprava
         elif bossx2 >= 20430:  # Při dosažení pravé hranice
-            boss_smer2 = -3  # Změň směr na doleva
+            boss_smer2 = -4.3  # Změň směr na doleva
 
     if zobraz_text:
         font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
