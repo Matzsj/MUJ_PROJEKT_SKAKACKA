@@ -20,9 +20,8 @@ jump_time = None
 
 checkpoint_reached2 = False
 
-texture = pygame.image.load('stone_textury.png')
-# Předpokládáme, že obrázek má velikost 50x50 pixelů (nebo jakoukoli jinou)
-texture = pygame.transform.scale(texture, (50, 50))  
+pohybujici_prekazkax5 = 20325
+
 
 zobraz_text = True
 zobraz_text2 = True
@@ -44,7 +43,8 @@ barva_ocí = (255, 255, 255)
 barva_zornic = (0, 0, 0)      
 
 # Počáteční pozice čtverce
-x_ctverec = rozliseni_sirka // 2 - 25 
+x_ctverec = 15000
+#rozliseni_sirka // 2 - 25 
 y_ctverec = 344 
 rychlost = 6
 
@@ -153,8 +153,14 @@ prekazky = [
     pygame.Rect(19100, 0, 500, 397),
     pygame.Rect(20500, 0, 500, 397),
     pygame.Rect(19100, 290, 1400, 8),
-    pygame.Rect(19600, 205, 70, 8),
+    pygame.Rect(19600, 205, 120, 8),
     pygame.Rect(20430, 205, 70, 8),
+    pygame.Rect(19820, 205, 70, 8),
+    pygame.Rect(20000, 120, 70, 8),
+    pygame.Rect(19990, 205, 70, 8),
+    pygame.Rect(20070, 120, 70, 8),
+    pygame.Rect(20160, 205, 70, 8),
+    pygame.Rect(20325, 0, 105, 105),
     pygame.Rect(-900, 0, 500, 397),
     
     ]
@@ -415,7 +421,7 @@ while True:
     if speed_boost_visible == True:
         screen.blit(speed_boost, (11130 - posun_sveta , 90))
     
-    if 11130 < new_x_ctverec < 11170:
+    if 11130 < new_x_ctverec < 11170 and speed_boost_visible == True:
         speed_time = pygame.time.get_ticks()
         rychlost = 11
         speed_boost_visible = False
@@ -439,7 +445,7 @@ while True:
     if jump_boost_visible == True:
         screen.blit(jump_boost, (5070 - posun_sveta , 210))
     
-    if 5070 < new_x_ctverec < 5110:
+    if 5070 < new_x_ctverec < 5110 and jump_boost_visible == True:
         jump_time = pygame.time.get_ticks()
         vyska_skoku = -18
         jump_boost_visible = False
@@ -715,6 +721,32 @@ while True:
     prekazky[53].x = pohybujici_prekazkax2
     
         
+        
+        
+        
+        
+        
+        
+    pohyb_prekx = 2
+    if pohybujici_prekazkax5 <= 19600:
+        pohybujici_prekazka_smer5 = 7
+    elif pohybujici_prekazkax5 >= 20325:
+        pohybujici_prekazka_smer5 = -7
+        
+    
+
+    # Posun překážky
+    pohybujici_prekazkax5 += pohybujici_prekazka_smer5
+
+
+    # Aktualizace polohy pohybující se překážky v seznamu
+    prekazky[80].x = pohybujici_prekazkax5
+    
+        
+        
+        
+        
+        
     pohyb_prekx = 2
     if pohybujici_prekazkax3 <= 10235:
         pohybujici_prekazka_smer2 = 3
@@ -760,9 +792,9 @@ while True:
         textl = ' '
         # Změna směru při dosažení hranic
         if bossx2 <= 19600:  # Při dosažení levé hranice
-            boss_smer2 = 4.3  # Změň směr na doprava
+            boss_smer2 = 3.15  # Změň směr na doprava
         elif bossx2 >= 20430:  # Při dosažení pravé hranice
-            boss_smer2 = -4.3  # Změň směr na doleva
+            boss_smer2 = -3.15  # Změň směr na doleva
 
     if zobraz_text:
         font = pygame.font.Font(None, 50)  # None znamená výchozí font, 36 je velikost písma
@@ -789,6 +821,16 @@ while True:
 
        # Detekce kolize
     if postava_rect.colliderect(boss):
+        print("Kolize s bossem!")
+        if cervena_zivot3 == (255, 0, 0):
+            cervena_zivot3 = (0, 0, 0)
+        elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
+            cervena_zivot2 = (0, 0, 0)
+            cervena_zivot1 = (255, 0, 0)
+        else:
+            cervena_zivot1 = (0, 0, 0)
+            
+    if postava_rect.colliderect(boss2):
         print("Kolize s bossem!")
         if cervena_zivot3 == (255, 0, 0):
             cervena_zivot3 = (0, 0, 0)
@@ -834,13 +876,14 @@ while True:
     cerna = (0,0,0) 
 
     if cervena_zivot1 == (0,0,0) and cervena_zivot2 == (0,0,0) and cervena_zivot3 == (0,0,0):
+        elapsed_time = None
         screen.fill((0, 0, 0))
         new_y_ctverec = 100
         new_x_ctverec = 200
         pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
         pygame.draw.rect(screen, (255, 255, 255), rect2, 2)
         font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
-        text = "hrát znovu"  # Text, který chcete vykreslit
+        text = "Hrát znovu"  # Text, který chcete vykreslit
         text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
         text_rect = text_surface.get_rect(center=(150, 275))  # Umístění textu na obrazovku
         screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
@@ -879,7 +922,7 @@ while True:
     if boss_timer is not None:
         elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
 
-        if elapsed_time >= 65:
+        if elapsed_time >= 65 :
             print("Uběhlo 60 sekund! Boss se zastaví.")
             screen.fill((0, 0, 0))
             pygame.draw.rect(screen, (255, 255, 255), rect1, 2)

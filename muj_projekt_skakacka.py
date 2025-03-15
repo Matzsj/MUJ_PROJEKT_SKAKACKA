@@ -26,6 +26,12 @@ rect12 = pygame.Rect(50, 200, 200, 50)
 rect2 = pygame.Rect(550, 250, 200, 50)
 rect22 = pygame.Rect(550, 200, 200, 50)
 
+speed_boost_visible = True
+
+jump_boost_visible = True
+
+speed_time = None
+jump_time = None
 
 
 barva_ctverce = (255, 0, 0)  # Červená barva pro čtverec
@@ -51,6 +57,14 @@ cervena_zivot3 = (255, 0 , 0)
 
 pygame.init()
 
+
+jump_boost_visible = True
+
+speed_boost_visible = True
+
+speed_time = None
+
+jump_time = None
 
 pohyb_bossa = False
 boss_smer = 3  # Počáteční směr pohybu (1 = doprava, -1 = doleva)
@@ -235,6 +249,22 @@ spiky = [
 
 
 
+try:
+    speed_boost = pygame.image.load('speed_boost.png').convert()
+    speed_boost = pygame.transform.scale(speed_boost, (40, 40))
+except pygame.error as e:
+    print(f"Chyba při načítání obrázku: {e}")
+    pygame.quit()
+    sys.exit()
+
+try:
+    jump_boost = pygame.image.load('jump_boost.png').convert()
+    jump_boost = pygame.transform.scale(jump_boost, (40, 40))
+except pygame.error as e:
+    print(f"Chyba při načítání obrázku: {e}")
+    pygame.quit()
+    sys.exit()
+
 posledni_prekazka = prekazky[19]
  
 
@@ -295,7 +325,50 @@ while True:
     
 
         
+               
+    if speed_boost_visible == True:
+        screen.blit(speed_boost, (2105 - posun_sveta , 250))
+    
+    if 2105 < new_x_ctverec < 2145 and speed_boost_visible == True:
+        speed_time = pygame.time.get_ticks()
+        rychlost = 11
+        speed_boost_visible = False
 
+    
+   
+        
+
+    # Vypočítáme uplynulý čas (pouze pokud byl boss_timer nastaven)
+    if speed_time is not None:
+        elapsed_time2 = (pygame.time.get_ticks() - speed_time) // 1000
+        
+        if elapsed_time2 >= 5:
+            rychlost = 6
+    
+        
+    #---------------------
+    
+    
+    
+    if jump_boost_visible == True:
+        screen.blit(jump_boost, (3905 - posun_sveta , 170))
+    
+    if 3905 < new_x_ctverec < 3945 and jump_boost_visible == True:
+        jump_time = pygame.time.get_ticks()
+        vyska_skoku = -18
+        jump_boost_visible = False
+
+    
+   
+        
+
+    # Vypočítáme uplynulý čas (pouze pokud byl boss_timer nastaven)
+    if jump_time is not None:
+        elapsed_time3 = (pygame.time.get_ticks() - jump_time) // 1000
+        
+        if elapsed_time3 >= 9:
+            vyska_skoku = -12.6
+    
 
     
     # Gravitace
