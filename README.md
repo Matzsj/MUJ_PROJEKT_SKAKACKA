@@ -1,7 +1,7 @@
 # MOJE_HRA_SKAKACKA
-Popis hry: 
+Hazard Rush
 
-Jump or Die
+Popis hry: 
 
 Ve světě plném nebezpečných pastí a smrtících překážek se vydáváš na cestu, kde každý skok může rozhodnout o tvém přežití. Tvým cílem je projít dvěma smrtícími úrovněmi, kde tě čekají nejen náročné platformingové sekce, ale i epické bossfighty.
 
