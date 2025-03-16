@@ -3,12 +3,19 @@ import pygame
 import time
 import random
 import subprocess
-
+pygame.mixer.init()
 pygame.init() 
 
 rozliseni_vyska = 600
 rozliseni_sirka = 800
 
+sound = pygame.mixer.Sound("retro-jump-3-236683.mp3")
+power_up_zvuk = pygame.mixer.Sound("coin-upaif-14631.mp3")
+game_over_zvuk = pygame.mixer.Sound("game-over-arcade-6435.mp3")
+win_zvuk = pygame.mixer.Sound("success-fanfare-trumpets-6185.mp3")
+
+
+win_zvuk_prehran = False
 
 boss_timer = None
 
@@ -18,8 +25,23 @@ nesmrtelnost_cas = 1000
 
 zobraz_text = True
 
+game_over_zvuk_prehran = False
+
+walk_right = [(pygame.image.load("postava_walking1-removebg-preview.png")),
+              (pygame.image.load("postava_walking2-removebg-preview.png"))]
+walk_left = [pygame.transform.flip(img, True, False) for img in walk_right]
+idle_right = (pygame.image.load("postava_standing-removebg-preview.png"))
+idle_left = pygame.transform.flip(idle_right, True, False)
+
+walk_right = [idle_right, idle_right, idle_right, idle_right, walk_right[0], walk_right[0], walk_right[0], walk_right[0], idle_right, idle_right, idle_right, idle_right, walk_right[1], walk_right[1], walk_right[1], walk_right[1]]
+walk_left = [idle_left, idle_left, idle_left, idle_left, walk_left[0], walk_left[0], walk_left[0], walk_left[0], idle_left, idle_left, idle_left, idle_left,  walk_left[1], walk_left[1], walk_left[1], walk_left[1]]
+
 
 zobraz_text2 = True
+
+
+frame_timer = 0  # Časovač pro animaci
+frame_duration = 300
 
 rect1 = pygame.Rect(50, 250, 200, 50)
 rect12 = pygame.Rect(50, 200, 200, 50)
@@ -33,6 +55,7 @@ jump_boost_visible = True
 speed_time = None
 jump_time = None
 
+smer = "right"
 
 barva_ctverce = (255, 0, 0)  # Červená barva pro čtverec
 barva_ocí = (255, 255, 255)   # Bílá barva pro oči
@@ -41,13 +64,11 @@ barva_zornic = (0, 0, 0)      # Černá barva pro zornice
 # Počáteční pozice čtverce
 x_ctverec = rozliseni_sirka // 2 - 25  # Střed čtverce
 y_ctverec = 363  # Počáteční výška na zemi
-rychlost = 30
-#5.65  # Rychlost pohybu
+rychlost = 5.65  # Rychlost pohybu
 
 gravitace = 1
 y_velocity = 0 
-vyska_skoku = -25
-#- 12.6  # Skok
+vyska_skoku = - 12.6  # Skok
 
 skace = False
 
@@ -274,6 +295,7 @@ boss_smer = 1  # Počáteční směr pohybu (1 znamená, že se pohybuje doprava
 speed = 2
 
 
+
 posledni_prekazkay = prekazky[29]
 
   # Pro ověření, že funguje správně
@@ -294,6 +316,7 @@ except pygame.error as e:
 clock = pygame.time.Clock()  # Inicializace hodin
 
 
+
 while True:
     for udalost in pygame.event.get():
         if udalost.type == pygame.QUIT: 
@@ -306,22 +329,40 @@ while True:
 
     # Kontrola stisknutých kláves
     klavesy = pygame.key.get_pressed()
-    
+    pohybuje_se = False
     new_x_ctverec = x_ctverec
     new_y_ctverec = y_ctverec
 
+    
+    
     if klavesy[pygame.K_a]:  
         new_x_ctverec -= rychlost
+        smer = "left"
+        pohybuje_se = True
     if klavesy[pygame.K_d]:  
         new_x_ctverec += rychlost
+        smer = "right"
+        pohybuje_se = True
+
+    # Přepínání snímků chůze
+    if pohybuje_se:
+        frame += 1
+        if frame >= len(walk_right):  # Reset na první snímek
+            frame = 0
+    else:
+        frame = 0  # Reset animace do stán
+
+    posun_sveta = x_ctverec - rozliseni_sirka // 2 + 25  # Vypočítání posunu kamery
      
+
     posun_sveta = x_ctverec - rozliseni_sirka // 2 + 25  # Vypočítání posunu kamery
 
      
     # Skok
     if klavesy[pygame.K_SPACE] and not skace:  
         y_velocity = vyska_skoku  
-        skace = True  
+        skace = True
+        sound.play()
     
 
         
@@ -333,6 +374,7 @@ while True:
         speed_time = pygame.time.get_ticks()
         rychlost = 11
         speed_boost_visible = False
+        power_up_zvuk.play()
 
     
    
@@ -357,6 +399,7 @@ while True:
         jump_time = pygame.time.get_ticks()
         vyska_skoku = -18
         jump_boost_visible = False
+        power_up_zvuk.play()
 
     
    
@@ -623,21 +666,30 @@ while True:
     y_ctverec = new_y_ctverec
 
     # Posun kamery
-    
-
-    
-    # Postava
-    pygame.draw.rect(screen, barva_ctverce, (x_ctverec - posun_sveta, y_ctverec + 2, 50, 51))
-    pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 15, y_ctverec + 15), 9.999)  
-    pygame.draw.circle(screen, barva_zornic, (x_ctverec - posun_sveta + 15, y_ctverec + 15), 5)   
-    pygame.draw.circle(screen, barva_ocí, (x_ctverec - posun_sveta + 35, y_ctverec + 15), 9.999)  
-    pygame.draw.circle(screen, barva_zornic, (x_ctverec - posun_sveta + 35, y_ctverec + 15), 5)   
-
-    # Překážky
-    for prekazka in prekazky:
+    if pohybuje_se:
+            frame_timer += clock.get_time()  # Přidání času od posledního snímku
+            if frame_timer >= frame_duration:  # Pokud uplynul čas pro změnu snímku
+                frame = (frame + 1) % len(walk_right)  # Přepínání snímků
+                frame_timer = 0  # Reset časovače
+    else:
+        frame = 0  # Reset animace do stání
+            
+    if pohybuje_se:
+        if smer == "right":
+            # Posuň pozici vykreslení postavy, aby odpovídala hitboxu
+            screen.blit(walk_right[frame], (new_x_ctverec - posun_sveta , new_y_ctverec))  # Posuň na levé straně
+        else:
+            screen.blit(walk_left[frame], (new_x_ctverec - posun_sveta, new_y_ctverec))  # Bez posunu na levé straně
+    else:
+        if smer == "right":
+            screen.blit(idle_right, (new_x_ctverec - posun_sveta , new_y_ctverec))  # Posuň na levé straně
+        else:
+            screen.blit(idle_left, (new_x_ctverec - posun_sveta, new_y_ctverec))  # Bez posunu na levé straně    for prekazka in prekazky:
         pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))  
     
-    
+    for prekazka in prekazky:
+        pygame.draw.rect(screen, (0, 0, 255), (prekazka.x - posun_sveta, prekazka.y, prekazka.width, prekazka.height))
+
 
     pygame.draw.circle(screen, cervena_zivot3, (40, 40), 15)
     pygame.draw.circle(screen, cervena_zivot2, (80, 40), 15)
@@ -715,7 +767,7 @@ while True:
     if boss_timer is not None:
         elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
 
-        if elapsed_time >= 1:
+        if elapsed_time >= 60:
             print("Uběhlo 60 sekund! Boss se zastaví.")
             screen.fill((0, 0, 0))
             pygame.draw.rect(screen, (255, 255, 255), rect12, 2)
@@ -731,6 +783,9 @@ while True:
             text_rect = text_surface.get_rect(center=(655, 225))  # Umístění textu na obrazovku
             screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
             pohyb_bossa = False
+            if win_zvuk_prehran == False:
+                win_zvuk.play()
+                win_zvuk_prehran = True
     
     if udalost.type == pygame.MOUSEBUTTONDOWN:    
             if rect22.collidepoint(udalost.pos):
@@ -755,6 +810,14 @@ while True:
         text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
         text_rect = text_surface.get_rect(center=(655, 275))  # Umístění textu na obrazovku
         screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+        font = pygame.font.Font(None, 80)  # None znamená výchozí font, 36 je velikost písma
+        text = "ZEMŘEL JSI"  # Text, který chcete vykreslit
+        text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+        text_rect = text_surface.get_rect(center=(400, 50))  # Umístění textu na obrazovku
+        screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+        if game_over_zvuk_prehran == False:
+            game_over_zvuk.play()
+            game_over_zvuk_prehran = True
 
     if udalost.type == pygame.MOUSEBUTTONDOWN:
             if rect1.collidepoint(udalost.pos):
