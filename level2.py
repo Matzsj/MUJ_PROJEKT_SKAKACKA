@@ -21,6 +21,9 @@ sound = pygame.mixer.Sound("retro-jump-3-236683.mp3")  # Nahraď názvem svého 
 power_up_zvuk = pygame.mixer.Sound("coin-upaif-14631.mp3")
 game_over_zvuk = pygame.mixer.Sound("game-over-arcade-6435.mp3")
 win_zvuk = pygame.mixer.Sound("success-fanfare-trumpets-6185.mp3")
+pygame.mixer.music.load("game-music-loop-6-144641.mp3")
+pygame.mixer.music.play(-1)  # -1 znamená opakování do nekonečna
+
 
 
 win_zvuk_prehran = False
@@ -962,6 +965,7 @@ while True:
         if game_over_zvuk_prehran == False:
             game_over_zvuk.play()
             game_over_zvuk_prehran = True
+        pygame.mixer.music.stop()
 
     if udalost.type == pygame.MOUSEBUTTONDOWN:
         if rect1.collidepoint(udalost.pos):
@@ -1017,6 +1021,7 @@ while True:
             if win_zvuk_prehran == False:
                 win_zvuk.play()
                 win_zvuk_prehran = True
+            pygame.mixer.music.stop()
             
                 
     if udalost.type == pygame.MOUSEBUTTONDOWN:    

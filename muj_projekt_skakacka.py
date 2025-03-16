@@ -13,8 +13,15 @@ sound = pygame.mixer.Sound("retro-jump-3-236683.mp3")
 power_up_zvuk = pygame.mixer.Sound("coin-upaif-14631.mp3")
 game_over_zvuk = pygame.mixer.Sound("game-over-arcade-6435.mp3")
 win_zvuk = pygame.mixer.Sound("success-fanfare-trumpets-6185.mp3")
+pygame.mixer.music.load("game-music-loop-7-145285.mp3")
+pygame.mixer.music.play(-1)  # -1 znamená opakování do nekonečna
 
 
+def spustit_level2():
+    pygame.quit()
+    subprocess.run(["python", "level2.py"])
+    sys.exit()
+    
 win_zvuk_prehran = False
 
 boss_timer = None
@@ -792,9 +799,7 @@ while True:
                 pygame.quit()
                 sys.exit()
             if rect12.collidepoint(udalost.pos):
-                pygame.quit()
-                subprocess.run(["python", "level2.py"])
-                sys.exit()
+                spustit_level2()
 
     if cervena_zivot1 == (0,0,0) and cervena_zivot2 == (0,0,0) and cervena_zivot3 == (0,0,0):
         screen.fill((0, 0, 0))
