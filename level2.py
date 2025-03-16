@@ -11,12 +11,13 @@ rozliseni_sirka = 800
 
 boss_timer = None
 
-
+vyhral_si = False
 
 checkpoint_reached2 = False
 
 pohybujici_prekazkax5 = 20325
 
+damage = pygame.mixer.Sound("damage-40114.mp3")
 sound = pygame.mixer.Sound("retro-jump-3-236683.mp3")  # Nahraď názvem svého souboru
 power_up_zvuk = pygame.mixer.Sound("coin-upaif-14631.mp3")
 game_over_zvuk = pygame.mixer.Sound("game-over-arcade-6435.mp3")
@@ -35,8 +36,8 @@ walk_left = [pygame.transform.flip(img, True, False) for img in walk_right]
 idle_right = (pygame.image.load("postava_standing-removebg-preview.png"))
 idle_left = pygame.transform.flip(idle_right, True, False)
 
-walk_right = [idle_right, idle_right, idle_right, walk_right[0], walk_right[0], walk_right[0], idle_right, idle_right, idle_right, walk_right[1], walk_right[1], walk_right[1]]
-walk_left = [idle_left, idle_left, idle_left, walk_left[0], walk_left[0], walk_left[0], idle_left, idle_left, idle_left, walk_left[1], walk_left[1], walk_left[1]]
+walk_right = [idle_right,idle_right,idle_right, idle_right, idle_right,walk_right[0],walk_right[0], walk_right[0], walk_right[0], walk_right[0], idle_right,idle_right,idle_right, idle_right, idle_right, walk_right[1],walk_right[1],walk_right[1], walk_right[1], walk_right[1]]
+walk_left = [idle_left,idle_left,idle_left, idle_left, idle_left, walk_left[0],walk_left[0],walk_left[0], walk_left[0], walk_left[0], idle_left, idle_left,idle_left,idle_left, idle_left, walk_left[1],walk_left[1],walk_left[1], walk_left[1], walk_left[1]]
 
 frame_timer = 0  # Časovač pro animaci
 frame_duration = 300
@@ -64,8 +65,7 @@ barva_ocí = (255, 255, 255)
 barva_zornic = (0, 0, 0)      
 
 # Počáteční pozice čtverce
-x_ctverec = 14900
-#rozliseni_sirka // 2 - 25 
+x_ctverec = rozliseni_sirka // 2 - 25 
 y_ctverec = 344 
 rychlost = 6
 
@@ -203,6 +203,7 @@ spiky = [
 [(-272, 396), (-223, 396), (-248, 349)],
 [(-208, 396), (-159, 396), (-184, 349)],
 [(-154, 396), (-105, 396), (-130, 349)],
+
 [(-50, 396), (-1, 396), (-26, 349)],
 [(542, 396), (591, 396), (566, 349)],
 [(598, 396), (647, 396), (622, 349)],
@@ -231,7 +232,7 @@ spiky = [
 
 
 
-
+[(2151, 396), (2200, 396), (2175, 349)],
 
 
 
@@ -651,6 +652,7 @@ while True:
                     if cervena_zivot3 == (255, 0, 0):
                         cervena_zivot3 = (0, 0, 0)
                         new_y_ctverec = 100
+                        damage.play()
                         new_x_ctverec = 100
                         if len(prekazky) > 51:
                             for x in prekazky:
@@ -662,6 +664,7 @@ while True:
                     elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
                         cervena_zivot2 = (0, 0, 0)
                         cervena_zivot1 = (255, 0, 0)
+                        damage.play()
                         new_y_ctverec = 100
                         new_x_ctverec = 100
                         if len(prekazky) > 51:
@@ -674,6 +677,7 @@ while True:
                     else:
                         cervena_zivot1 = (0, 0, 0)
                         new_y_ctverec = 100
+                        damage.play()
                         new_x_ctverec = 100   
                         if len(prekazky) > 51:
                             for x in prekazky:
@@ -755,9 +759,9 @@ while True:
     
     pohyb_prekx = 2
     if pohybujici_prekazkax1 <= 2200:
-        pohybujici_prekazka_smer = 4
+        pohybujici_prekazka_smer = 8
     elif pohybujici_prekazkax1 >= 3560:
-        pohybujici_prekazka_smer = -4
+        pohybujici_prekazka_smer = -8
         
     
 
@@ -889,21 +893,27 @@ while True:
         print("Kolize s bossem!")
         if cervena_zivot3 == (255, 0, 0):
             cervena_zivot3 = (0, 0, 0)
+            damage.play()
         elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
             cervena_zivot2 = (0, 0, 0)
+            damage.play()
             cervena_zivot1 = (255, 0, 0)
         else:
             cervena_zivot1 = (0, 0, 0)
+            damage.play()
             
     if postava_rect.colliderect(boss2):
         print("Kolize s bossem!")
         if cervena_zivot3 == (255, 0, 0):
             cervena_zivot3 = (0, 0, 0)
+            damage.play()
         elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
             cervena_zivot2 = (0, 0, 0)
+            damage.play()
             cervena_zivot1 = (255, 0, 0)
         else:
             cervena_zivot1 = (0, 0, 0)
+            damage.play()
 
 
     # Můžeš zde přidat další logiku, např. ubrání života nebo konec hry
@@ -962,6 +972,7 @@ while True:
         text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
         text_rect = text_surface.get_rect(center=(400, 50))  # Umístění textu na obrazovku
         screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+        vyhral_si = True
         if game_over_zvuk_prehran == False:
             game_over_zvuk.play()
             game_over_zvuk_prehran = True
@@ -996,7 +1007,7 @@ while True:
     if boss_timer is not None:
         elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
 
-        if elapsed_time >= 1 :
+        if elapsed_time >= 55 and vyhral_si == False:
             print("Uběhlo 60 sekund! Boss se zastaví.")
             screen.fill((0, 0, 0))
             pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
@@ -1018,6 +1029,7 @@ while True:
             text_rect = text_surface.get_rect(center=(400, 50))  # Umístění textu na obrazovku
             screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
             pohyb_bossa = False
+            
             if win_zvuk_prehran == False:
                 win_zvuk.play()
                 win_zvuk_prehran = True

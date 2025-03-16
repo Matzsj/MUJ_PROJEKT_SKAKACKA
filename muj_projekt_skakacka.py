@@ -9,13 +9,20 @@ pygame.init()
 rozliseni_vyska = 600
 rozliseni_sirka = 800
 
+vyhral_si = False
+
+damage = pygame.mixer.Sound("damage-40114.mp3")
 sound = pygame.mixer.Sound("retro-jump-3-236683.mp3")
 power_up_zvuk = pygame.mixer.Sound("coin-upaif-14631.mp3")
 game_over_zvuk = pygame.mixer.Sound("game-over-arcade-6435.mp3")
 win_zvuk = pygame.mixer.Sound("success-fanfare-trumpets-6185.mp3")
-pygame.mixer.music.load("game-music-loop-7-145285.mp3")
-pygame.mixer.music.play(-1)  # -1 znamená opakování do nekonečna
 
+pygame.mixer.music.load("game-music-loop-7-145285.mp3")
+pygame.mixer.music.play(-1)
+
+
+if damage is None:
+    print("Chyba: Zvuk se nenačetl!")
 
 def spustit_level2():
     pygame.quit()
@@ -160,6 +167,7 @@ prekazky = [
     pygame.Rect(10200, 313, 70, 20),
     pygame.Rect(10320, 313, 70, 20),
     pygame.Rect(10440, 313, 130, 20),
+    pygame.Rect(-500, 0, 500, 413),
 ]
 
 zivoty = [
@@ -602,6 +610,7 @@ while True:
                     print("Kolize s bodcem!")  # Výpis ihned při detekci
                     if cervena_zivot3 == (255, 0, 0):
                         cervena_zivot3 = (0, 0, 0)
+                        damage.play()
                         new_y_ctverec = 100
                         new_x_ctverec = 100
                         if len(prekazky) > 30:
@@ -617,6 +626,7 @@ while True:
                     elif cervena_zivot3 == (0, 0, 0) and cervena_zivot2 == (255, 0, 0):
                         cervena_zivot2 = (0, 0, 0)
                         cervena_zivot1 = (255, 0, 0)
+                        damage.play()
                         new_y_ctverec = 100
                         new_x_ctverec = 100
                         if len(prekazky) > 30:
@@ -631,6 +641,7 @@ while True:
                         cervena_zivot1 = (0, 0, 0)
                         new_y_ctverec = 100
                         new_x_ctverec = 100
+                        damage.play()
                         if len(prekazky) > 30:
                             for x in prekazky:
                                 if not checkpoint_reached and postava_rect.right > prekazky[30].left and new_x_ctverec < 8000:  
@@ -774,7 +785,7 @@ while True:
     if boss_timer is not None:
         elapsed_time = (pygame.time.get_ticks() - boss_timer) // 1000
 
-        if elapsed_time >= 60:
+        if elapsed_time >= 50 and vyhral_si == False:
             print("Uběhlo 60 sekund! Boss se zastaví.")
             screen.fill((0, 0, 0))
             pygame.draw.rect(screen, (255, 255, 255), rect12, 2)
@@ -789,10 +800,18 @@ while True:
             text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
             text_rect = text_surface.get_rect(center=(655, 225))  # Umístění textu na obrazovku
             screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+            font = pygame.font.Font(None, 80)  # None znamená výchozí font, 36 je velikost písma
+            text = "VYHRÁL SI"  # Text, který chcete vykreslit
+            text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
+            text_rect = text_surface.get_rect(center=(400, 50))  # Umístění textu na obrazovku
+            screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+            pohyb_bossa = False
+            
             pohyb_bossa = False
             if win_zvuk_prehran == False:
                 win_zvuk.play()
                 win_zvuk_prehran = True
+            pygame.mixer.music.stop()
     
     if udalost.type == pygame.MOUSEBUTTONDOWN:    
             if rect22.collidepoint(udalost.pos):
@@ -802,7 +821,7 @@ while True:
                 spustit_level2()
 
     if cervena_zivot1 == (0,0,0) and cervena_zivot2 == (0,0,0) and cervena_zivot3 == (0,0,0):
-        screen.fill((0, 0, 0))
+        screen.fill((0, 0, 0))and vyhral_si == False
         pygame.draw.rect(screen, (255, 255, 255), rect1, 2)
         pygame.draw.rect(screen, (255, 255, 255), rect2, 2)
         font = pygame.font.Font(None, 36)  # None znamená výchozí font, 36 je velikost písma
@@ -820,9 +839,11 @@ while True:
         text_surface = font.render(text, True, (255, 255, 255))  # Bílý text
         text_rect = text_surface.get_rect(center=(400, 50))  # Umístění textu na obrazovku
         screen.blit(text_surface, text_rect)  # Vykreslení textu na obrazovku
+        vyhral_si = True
         if game_over_zvuk_prehran == False:
             game_over_zvuk.play()
             game_over_zvuk_prehran = True
+        pygame.mixer.music.stop()
 
     if udalost.type == pygame.MOUSEBUTTONDOWN:
             if rect1.collidepoint(udalost.pos):
